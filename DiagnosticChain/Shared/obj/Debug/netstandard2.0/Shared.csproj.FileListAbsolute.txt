@@ -1,0 +1,8 @@
+D:\DiagnosticChain\DiagnosticChain\Shared\bin\Debug\netstandard2.0\Shared.deps.json
+D:\DiagnosticChain\DiagnosticChain\Shared\bin\Debug\netstandard2.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\Shared\bin\Debug\netstandard2.0\Shared.pdb
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.csprojAssemblyReference.cache
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfoInputs.cache
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.pdb

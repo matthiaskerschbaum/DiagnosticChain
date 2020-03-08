@@ -1,0 +1,14 @@
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.exe
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.deps.json
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.runtimeconfig.json
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.runtimeconfig.dev.json
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Handler.pdb
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.csprojAssemblyReference.cache
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.AssemblyInfoInputs.cache
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.AssemblyInfo.cs
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.pdb
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Shared.pdb
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.csproj.CopyComplete
