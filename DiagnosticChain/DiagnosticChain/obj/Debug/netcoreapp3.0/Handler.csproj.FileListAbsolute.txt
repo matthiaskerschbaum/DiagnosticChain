@@ -12,3 +12,6 @@ D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handl
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Shared.dll
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Shared.pdb
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handler.csproj.CopyComplete
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Blockchain.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Blockchain.pdb

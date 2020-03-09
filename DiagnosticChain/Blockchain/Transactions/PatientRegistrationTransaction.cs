@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Blockchain.Transactions
 {
-    class PatientRegistrationTransaction : ITransaction
+    public class PatientRegistrationTransaction : ITransaction
     {
         public string Country { get; set; }
         public string Region { get; set; }

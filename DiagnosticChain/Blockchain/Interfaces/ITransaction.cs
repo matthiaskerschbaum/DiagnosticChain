@@ -4,12 +4,13 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Serialization;
+using Shared;
 
 namespace Blockchain.Interfaces
 {
     public abstract class ITransaction
     {
-        public string Type { get; set; }
+        public TransactionType Type { get; set; }
         public Guid TransactionId { get; set; }
         public DateTime Timestamp { get; set; }
         public Guid SenderAddress { get; set; }
@@ -19,14 +20,13 @@ namespace Blockchain.Interfaces
         {
             //TODO Test whether this actually works
             XmlSerializer xsSubmit = new XmlSerializer(this.GetType());
-            var subReq = Activator.CreateInstance(this.GetType());
             var xml = "";
 
             using (var sww = new StringWriter())
             {
                 using (XmlWriter writer = XmlWriter.Create(sww))
                 {
-                    xsSubmit.Serialize(writer, subReq);
+                    xsSubmit.Serialize(writer, this);
                     xml = sww.ToString();
                 }
             }
@@ -42,7 +42,7 @@ namespace Blockchain.Interfaces
 
         public virtual string AsString()
         {
-            return TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
+            return Type + "|" + TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
         }
 
         public void Sign(string privateKey)

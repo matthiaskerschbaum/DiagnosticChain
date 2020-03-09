@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Blockchain.Transactions
 {
-    class VotingTransaction : ITransaction
+    public class VotingTransaction : ITransaction
     {
         public Guid TransactionAddress { get; set; }
         public bool Vote { get; set; }
