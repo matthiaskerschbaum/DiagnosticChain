@@ -32,41 +32,83 @@ namespace Handler.Handlers
 
             #region Testing
 
-            Guid Sender = Guid.NewGuid();
-            string privateKey = "privateKey";
-            string publicKeyPublisher = "publicKey";
-            string publicKeyPhysician = "publicKey";
+            var keysPublisher = EncryptionHandler.GenerateNewKeys();
+            var keysPhysician = EncryptionHandler.GenerateNewKeys();
 
-            List<ITransaction> transactions = new List<ITransaction>();
-            TransactionGenerator transactionGenerator = new TransactionGenerator(Sender, privateKey);
+            Guid publisher = Guid.NewGuid();
+            //string privateKey = "privateKey";
+            //string publicKeyPublisher = "publicKey";
+            //string publicKeyPhysician = "publicKey";
 
-            ITransaction publisher = transactionGenerator.GeneratePublisherRegistrationTransaction(publicKeyPublisher, "Austria", "Vienna", "Der Horst");
-            ITransaction physician = transactionGenerator.GeneratePhysicianRegistrationTransaction(publicKeyPhysician, "Austria", "Vienna", "Der Herbert");
-            ITransaction patient = transactionGenerator.GeneratePatientRegistrationTransaction("Austria", "Vienna", "1989");
-            ITransaction treatment = transactionGenerator.GenerateTreatmentTransaction(physician.TransactionId, patient.TransactionId);
+            //List<ITransaction> transactions = new List<ITransaction>();
+            TransactionGenerator transactionGenerator = new TransactionGenerator(publisher, keysPublisher.PrivateKey);
+            var block = new Block(publisher);
 
-            transactions.Add(treatment);
-            transactions.Add(transactionGenerator.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "Headache", "Vertigo" }));
-            transactions.Add(transactionGenerator.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "Dehydration" }));
-            transactions.Add(publisher);
-            transactions.Add(physician);
-            transactions.Add(patient);
-            transactions.Add(transactionGenerator.GenerateVotingTransaction(publisher.TransactionId, true));
+            ITransaction publisherRegistration = transactionGenerator.GeneratePublisherRegistrationTransaction(keysPublisher.PublicKey, "Austria", "Vienna", "Der Horst");
+            ITransaction physicianRegistration = transactionGenerator.GeneratePhysicianRegistrationTransaction(keysPhysician.PublicKey, "Austria", "Vienna", "Der Herbert");
+            ITransaction patientRegistration = transactionGenerator.GeneratePatientRegistrationTransaction("Austria", "Vienna", "1989");
+            ITransaction treatment = transactionGenerator.GenerateTreatmentTransaction(physicianRegistration.TransactionId, patientRegistration.TransactionId);
 
-            CLI.DisplayLine("Printing transactions: ");
+            block.AddTransaction(publisherRegistration);
+            block.AddTransaction(physicianRegistration);
+            block.AddTransaction(patientRegistration);
+            block.AddTransaction(treatment);
+            block.AddTransaction(transactionGenerator.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "Headache", "Vertigo" }));
+            block.AddTransaction(transactionGenerator.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "Dehydration" }));
+            block.AddTransaction(transactionGenerator.GenerateVotingTransaction(publisherRegistration.TransactionId, true));
 
-            foreach (var t in transactions)
-            {
-                CLI.DisplayLineDelimiter();
-                CLI.DisplayLine(t.AsString());
-                CLI.DisplayLine(t.AsXML());
-                CLI.DisplayLine(t.AsJSON());
-                CLI.DisplayLineDelimiter();
-            }
+            block.Sign(keysPublisher.PrivateKey);
 
-            RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
-            CLI.DisplayLine(RSA.ToXmlString(false));
-            CLI.DisplayLine(RSA.ToXmlString(true));
+            CLI.DisplayLine(block.AsJSON());
+            CLI.DisplayLine(block.AsXML());
+            CLI.DisplayLine(block.AsString());
+
+            CLI.DisplayLineDelimiter();
+
+            CLI.DisplayLine(block.Validate(keysPublisher.PublicKey).ToString());
+            CLI.DisplayLine(block.Validate(keysPhysician.PublicKey).ToString());
+
+            //transactions.Add(treatment);
+            //transactions.Add(transactionGenerator.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "Headache", "Vertigo" }));
+            //transactions.Add(transactionGenerator.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "Dehydration" }));
+            //transactions.Add(publisher);
+            //transactions.Add(physician);
+            //transactions.Add(patient);
+            //transactions.Add(transactionGenerator.GenerateVotingTransaction(publisher.TransactionId, true));
+
+            //CLI.DisplayLine("Printing transactions: ");
+
+            //foreach (var t in transactions)
+            //{
+            //    CLI.DisplayLineDelimiter();
+            //    //CLI.DisplayLine(t.AsString());
+            //    //CLI.DisplayLine(t.AsXML());
+            //    CLI.DisplayLine(t.AsJSON());
+            //    CLI.DisplayLineDelimiter();
+            //}
+
+            //CLI.DisplayLine("Printing validations: ");
+
+            //foreach (var t in transactions)
+            //{
+            //    CLI.DisplayLineDelimiter();
+            //    CLI.DisplayLine(t.Validate(keysPublisher.PublicKey).ToString());
+            //    CLI.DisplayLine(t.Validate(keysPhysician.PublicKey).ToString());
+            //    CLI.DisplayLineDelimiter();
+            //}
+
+
+            //var message = "Das ist ein Test!";
+            //var hash = Convert.ToBase64String( SHA256.Create().ComputeHash(Encoding.Unicode.GetBytes(message)) );
+
+            //CLI.DisplayLine(message);
+
+            //var signature = EncryptionHandler.Sign(message, keys.PrivateKey);
+            //var reference = EncryptionHandler.VerifiySignature(message, signature, keys.PublicKey);
+
+            //CLI.DisplayLine(signature);
+            //CLI.DisplayLine(reference.ToString());
+
             #endregion
 
             //TODO Replace with actual logic

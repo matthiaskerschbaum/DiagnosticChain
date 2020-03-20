@@ -5,20 +5,27 @@ using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Serialization;
 using Shared;
+using Blockchain.Transactions;
 
 namespace Blockchain.Interfaces
 {
+    [XmlInclude(typeof(DiagnosesTransaction))
+            , XmlInclude(typeof(PatientRegistrationTransaction))
+            , XmlInclude(typeof(PhysicianRegistrationTransaction))
+            , XmlInclude(typeof(PublisherRegistrationTransaction))
+            , XmlInclude(typeof(SymptomsTransaction))
+            , XmlInclude(typeof(TreatmentTransaction))
+            , XmlInclude(typeof(VotingTransaction))]
     public abstract class ITransaction
     {
         public TransactionType Type { get; set; }
         public Guid TransactionId { get; set; }
         public DateTime Timestamp { get; set; }
         public Guid SenderAddress { get; set; }
-        public string SenderVerification { get; set; } //Hash of all the data in the object
+        public string SenderVerification { get; set; }
 
         public string AsXML()
         {
-            //TODO Test whether this actually works
             XmlSerializer xsSubmit = new XmlSerializer(this.GetType());
             var xml = "";
 
@@ -36,7 +43,6 @@ namespace Blockchain.Interfaces
 
         public string AsJSON()
         {
-            //TODO Test whether this actually works
             return JsonConvert.SerializeObject(this);
         }
 
@@ -45,16 +51,14 @@ namespace Blockchain.Interfaces
             return Type + "|" + TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
         }
 
-        public void Sign(string privateKey)
+        public void Sign(RSAParameters privateKey)
         {
-            //TODO implement encryption with private key
-            SenderVerification = this.AsString();
+            SenderVerification = EncryptionHandler.Sign(AsString(), privateKey);
         }
 
-        public bool Validate(string publicKey)
+        public bool Validate(RSAParameters publicKey)
         {
-            //TODO decrypt SenderVerification and compare to string representation
-            return SenderVerification == this.AsString();
+            return EncryptionHandler.VerifiySignature(AsString(), SenderVerification, publicKey);
         }
     }
 }

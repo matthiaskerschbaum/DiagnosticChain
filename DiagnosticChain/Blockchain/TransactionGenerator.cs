@@ -3,6 +3,7 @@ using Blockchain.Transactions;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Blockchain
@@ -10,9 +11,9 @@ namespace Blockchain
     public class TransactionGenerator
     {
         private Guid SenderAddress;
-        private string privateKey;
+        private RSAParameters privateKey;
 
-        public TransactionGenerator(Guid SenderAddress, string privateKey)
+        public TransactionGenerator(Guid SenderAddress, RSAParameters privateKey)
         {
             this.SenderAddress = SenderAddress;
             this.privateKey = privateKey;
@@ -59,7 +60,7 @@ namespace Blockchain
             return SignTransaction(transaction);
         }
 
-        public ITransaction GeneratePublisherRegistrationTransaction(string PublicKey, string Country, string Region, string EntityName)
+        public ITransaction GeneratePublisherRegistrationTransaction(RSAParameters PublicKey, string Country, string Region, string EntityName)
         {
             var transaction = (PublisherRegistrationTransaction)BasicSetup(new PublisherRegistrationTransaction());
             transaction.Type = TransactionType.PUBLISHER;
@@ -70,7 +71,7 @@ namespace Blockchain
             return SignTransaction(transaction);
         }
 
-        public ITransaction GeneratePhysicianRegistrationTransaction(string PublicKey, string Country, string Region, string Name)
+        public ITransaction GeneratePhysicianRegistrationTransaction(RSAParameters PublicKey, string Country, string Region, string Name)
         {
             var transaction = (PhysicianRegistrationTransaction)BasicSetup(new PhysicianRegistrationTransaction());
             transaction.Type = TransactionType.PHYSICIAN;

@@ -1,7 +1,14 @@
 ﻿using Blockchain.Interfaces;
+using Blockchain.Transactions;
+using Newtonsoft.Json;
+using Shared;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Blockchain
 {
@@ -11,33 +18,58 @@ namespace Blockchain
         public DateTime Timestamp { get; set; }
         public string Hash { get; set; }
         public string PreviousHash { get; set; }
+        [XmlIgnore]
+        [JsonIgnore]
         public Block PreviousBlock { get; set; }
-        public List<ITransaction> Transactions { get; set; }
+        public List<ITransaction> Transactions { get; set; } = new List<ITransaction>();
         public Guid Publisher { get; set; }
         public string PublisherVerification { get; set; }
 
+        public Block() { }
+
+        public Block(Guid publisher)
+        {
+            this.Publisher = publisher;
+        }
+
+       
         public string AsXML()
         {
-            throw new NotImplementedException();
-            //TODO Convert object to xml
+            XmlSerializer xsSubmit = new XmlSerializer(this.GetType(), new Type[] { typeof(ITransaction) });
+            var xml = "";
+
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    xsSubmit.Serialize(writer, this);
+                    xml = sww.ToString();
+                }
+            }
+
+            return xml;
         }
 
         public string AsJSON()
         {
-            throw new NotImplementedException();
-            //TODO Convert object to json
+            return JsonConvert.SerializeObject(this);
         }
 
         public string AsString()
         {
-            throw new NotImplementedException();
-            //TODO Convert object to string
-        }
+            var ret = Index + "||"
+                      + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "||"
+                      + Hash + "||"
+                      + PreviousHash + "||";
 
-        public void CalculateHash()
-        {
-            throw new NotImplementedException();
-            //TODO Get String from object, calculate Hash and store it in Hash
+            foreach (var t in Transactions)
+            {
+                ret += t.AsString() + "||";
+            }
+
+            ret += Publisher; //PublisherVerification is not part of the string, because it is calculated after hashing
+
+            return ret;
         }
 
         public void AddTransaction(ITransaction transaction)
@@ -45,22 +77,26 @@ namespace Blockchain
             Transactions.Add(transaction);
         }
 
-        public void Sign(string privateKey)
+        public void Sign(RSAParameters privateKey)
         {
-            //TODO implement encryption with private key
-            PublisherVerification = this.AsString();
+            Timestamp = DateTime.UtcNow;
+            CalculateHash();
+            PublisherVerification = EncryptionHandler.Sign(AsString(), privateKey);
         }
 
         public bool ValidateSequence()
         {
-            //TODO decrypt SenderVerification and compare to string representation
-            return PreviousBlock != null ? PreviousHash == PreviousBlock.Hash : true;
+            return PreviousBlock != null ? (PreviousHash == PreviousBlock.Hash && Index == PreviousBlock.Index+1) : true;
         }
 
-        public bool Validate(string publicKey)
+        public bool Validate(RSAParameters publicKey)
         {
-            //TODO decrypt SenderVerification and compare to string representation
-            return PublisherVerification == this.AsString() && ValidateSequence();
+            return EncryptionHandler.VerifiySignature(AsString(), PublisherVerification, publicKey) && ValidateSequence();
+        }
+
+        public void CalculateHash()
+        {
+            Hash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.Unicode.GetBytes(AsString())));
         }
     }
 }

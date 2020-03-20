@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Shared;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Blockchain
@@ -22,24 +24,38 @@ namespace Blockchain
             return result;
         }
 
-        public bool Validate(Dictionary<Guid, string> publisherKeyVault)
+        public bool Validate(ParticipantHandler participantHandler)
         {
-            var result = true;
+            var blockIsValid = true;
             var currentBlock = Blockhead;
 
-            while (currentBlock != null)
+            while (currentBlock != null && blockIsValid)
             {
-                if (publisherKeyVault.ContainsKey(currentBlock.Publisher))
+                if (participantHandler.HasPublisher(currentBlock.Publisher))
                 {
-                    result &= currentBlock.Validate(publisherKeyVault[currentBlock.Publisher]);
+                    blockIsValid &= currentBlock.Validate(participantHandler.GetPublisherKey(currentBlock.Publisher));
+                    foreach (var t in currentBlock.Transactions)
+                    {
+                        if (participantHandler.HasSender(t.SenderAddress))
+                        {
+                            blockIsValid &= t.Validate(participantHandler.GetSenderKey(t.SenderAddress));
+                            blockIsValid &= participantHandler.HandleTransaction(t);
+                        } else
+                        {
+                            blockIsValid = false;
+                        }
+                    }
                     currentBlock = currentBlock.PreviousBlock;
+                } else if (currentBlock.Index == 0) //Initializing block does not need to be validated
+                {
+                    blockIsValid &= true;
                 } else
                 {
-                    result = false;
+                    blockIsValid = false;
                 }
             }
 
-            return result;
+            return blockIsValid;
         }
 
         public bool Add(Block block)

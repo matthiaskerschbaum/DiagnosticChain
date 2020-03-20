@@ -9,3 +9,5 @@ D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeM
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.csproj.CopyComplete
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.dll
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.pdb
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.pdb
