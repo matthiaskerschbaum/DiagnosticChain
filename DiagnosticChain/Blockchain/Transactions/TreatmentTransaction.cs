@@ -14,5 +14,10 @@ namespace Blockchain.Transactions
         {
             return base.AsString() + "|" + PhysicianAddress + "|" + PatientAddress;
         }
+
+        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            return participantHandler.HasSender(PhysicianAddress) && participantHandler.HasPatient(PatientAddress);
+        }
     }
 }

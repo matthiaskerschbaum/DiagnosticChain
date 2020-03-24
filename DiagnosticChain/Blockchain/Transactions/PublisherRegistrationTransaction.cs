@@ -1,4 +1,5 @@
-﻿using Blockchain.Interfaces;
+﻿using Blockchain.Entities;
+using Blockchain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -16,6 +17,20 @@ namespace Blockchain.Transactions
         public override string AsString()
         {
             return base.AsString() + "|" + PublicKey + "|" + Country + "|" + Region + "|" + EntityName;
+        }
+
+        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            participantHandler.ProposePublisher(new Publisher()
+            {
+                Address = TransactionId
+                ,PublicKey = PublicKey
+                ,Country = Country
+                ,Region = Region
+                ,EntityName = EntityName
+            });
+
+            return true;
         }
     }
 }

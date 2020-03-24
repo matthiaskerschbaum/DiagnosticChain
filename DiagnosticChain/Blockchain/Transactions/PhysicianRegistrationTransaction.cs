@@ -1,4 +1,5 @@
-﻿using Blockchain.Interfaces;
+﻿using Blockchain.Entities;
+using Blockchain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -16,6 +17,25 @@ namespace Blockchain.Transactions
         public override string AsString()
         {
             return base.AsString() + "|" + PublicKey + "|" + Country + "|" + Region + "|" + Name;
+        }
+
+        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            if (SenderAddress != TransactionId)
+            {
+                return false;
+            }
+
+            participantHandler.ProposePhysician(new Physician()
+            { 
+                Address = TransactionId
+                ,PublicKey = PublicKey
+                ,Country = Country
+                ,Region = Region
+                ,Name = Name
+            });
+
+            return true;
         }
     }
 }

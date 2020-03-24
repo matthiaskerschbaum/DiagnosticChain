@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using static Shared.EncryptionHandler;
 
 namespace Handler.Handlers
 {
@@ -14,104 +17,59 @@ namespace Handler.Handlers
         //Delegates
         private Action onShutDown;
 
+        //Publisher parameters
+        Guid publisherAddress;
+        KeyPair keys;
+        TransactionGenerator transactionGenerator;
+        TransactionBuffer transactionBuffer;
+        ParticipantHandler participantHandler;
+
+        //Parallel running tasks
+        Timer blockGenerator;
+        Timer blockProcessor;
+
+        //Chain parameters
+        private Chain chain;
+
         public void StartUp(Action onShutDown)
         {
             CLI.DisplayLine("Starting PublisherHandler...");
 
             //Initialize Handler
             this.onShutDown = onShutDown;
+            transactionBuffer = new TransactionBuffer();
+            participantHandler = new ParticipantHandler();
+            chain = new Chain();
 
             //TODO Prompt user for username
-            //TODO Set up node (Store alle blockchain data) => Read from disk if present, prompt for URL else
+            CLI.DisplayLine("Welcome to the publisher interface");
+            
+            //TODO Prompt for username, test whether publisher is already initialized, read in data if present
+            RegisterPublisher();
+
+            //TODO Set up node (Store all blockchain data) => Read from disk if present, prompt for URL else
             //TODO Start listening to incoming requests
+            
             //TODO Start publishsing job
-            //TODO Start listening to user input
+            CLI.DisplayLine("Starting publishing jobs...");
 
-            CLI.DisplayLine("PublisherHandler started");
+            blockGenerator = new Timer(transactionBuffer.BundleTransactions, null, 5000, 5000);
+            blockProcessor = new Timer(HandlePublishing, null, 7000, 5000);
+
+            CLI.DisplayLine("Publishing jobs started");
 
 
-            #region Testing
-
-            var keysPublisher = EncryptionHandler.GenerateNewKeys();
-            var keysPhysician = EncryptionHandler.GenerateNewKeys();
-
-            Guid publisher = Guid.NewGuid();
-            //string privateKey = "privateKey";
-            //string publicKeyPublisher = "publicKey";
-            //string publicKeyPhysician = "publicKey";
-
-            //List<ITransaction> transactions = new List<ITransaction>();
-            TransactionGenerator transactionGenerator = new TransactionGenerator(publisher, keysPublisher.PrivateKey);
-            var block = new Block(publisher);
-
-            ITransaction publisherRegistration = transactionGenerator.GeneratePublisherRegistrationTransaction(keysPublisher.PublicKey, "Austria", "Vienna", "Der Horst");
-            ITransaction physicianRegistration = transactionGenerator.GeneratePhysicianRegistrationTransaction(keysPhysician.PublicKey, "Austria", "Vienna", "Der Herbert");
-            ITransaction patientRegistration = transactionGenerator.GeneratePatientRegistrationTransaction("Austria", "Vienna", "1989");
-            ITransaction treatment = transactionGenerator.GenerateTreatmentTransaction(physicianRegistration.TransactionId, patientRegistration.TransactionId);
-
-            block.AddTransaction(publisherRegistration);
-            block.AddTransaction(physicianRegistration);
-            block.AddTransaction(patientRegistration);
-            block.AddTransaction(treatment);
-            block.AddTransaction(transactionGenerator.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "Headache", "Vertigo" }));
-            block.AddTransaction(transactionGenerator.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "Dehydration" }));
-            block.AddTransaction(transactionGenerator.GenerateVotingTransaction(publisherRegistration.TransactionId, true));
-
-            block.Sign(keysPublisher.PrivateKey);
-
-            CLI.DisplayLine(block.AsJSON());
-            CLI.DisplayLine(block.AsXML());
-            CLI.DisplayLine(block.AsString());
-
+            CLI.DisplayLine("PublisherHandler started. Enter Q to quit.");
             CLI.DisplayLineDelimiter();
 
-            CLI.DisplayLine(block.Validate(keysPublisher.PublicKey).ToString());
-            CLI.DisplayLine(block.Validate(keysPhysician.PublicKey).ToString());
+            //TODO Start listening to user input
+            var userInput = "";
+            while (userInput != "Q")
+            {
+                userInput = CLI.PromptUser("What do you want me to do now?");
+                HandleUserInput(userInput);
+            }
 
-            //transactions.Add(treatment);
-            //transactions.Add(transactionGenerator.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "Headache", "Vertigo" }));
-            //transactions.Add(transactionGenerator.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "Dehydration" }));
-            //transactions.Add(publisher);
-            //transactions.Add(physician);
-            //transactions.Add(patient);
-            //transactions.Add(transactionGenerator.GenerateVotingTransaction(publisher.TransactionId, true));
-
-            //CLI.DisplayLine("Printing transactions: ");
-
-            //foreach (var t in transactions)
-            //{
-            //    CLI.DisplayLineDelimiter();
-            //    //CLI.DisplayLine(t.AsString());
-            //    //CLI.DisplayLine(t.AsXML());
-            //    CLI.DisplayLine(t.AsJSON());
-            //    CLI.DisplayLineDelimiter();
-            //}
-
-            //CLI.DisplayLine("Printing validations: ");
-
-            //foreach (var t in transactions)
-            //{
-            //    CLI.DisplayLineDelimiter();
-            //    CLI.DisplayLine(t.Validate(keysPublisher.PublicKey).ToString());
-            //    CLI.DisplayLine(t.Validate(keysPhysician.PublicKey).ToString());
-            //    CLI.DisplayLineDelimiter();
-            //}
-
-
-            //var message = "Das ist ein Test!";
-            //var hash = Convert.ToBase64String( SHA256.Create().ComputeHash(Encoding.Unicode.GetBytes(message)) );
-
-            //CLI.DisplayLine(message);
-
-            //var signature = EncryptionHandler.Sign(message, keys.PrivateKey);
-            //var reference = EncryptionHandler.VerifiySignature(message, signature, keys.PublicKey);
-
-            //CLI.DisplayLine(signature);
-            //CLI.DisplayLine(reference.ToString());
-
-            #endregion
-
-            //TODO Replace with actual logic
             ShutDown();
         }
 
@@ -121,6 +79,9 @@ namespace Handler.Handlers
 
             //TODO stop listening to incoming requests
             //TODO stop publishing job
+            blockGenerator.Dispose();
+            blockProcessor.Dispose();
+
             //TODO Save blockchain to file
 
             CLI.DisplayLine("PublisherHandler shut down");
@@ -129,16 +90,34 @@ namespace Handler.Handlers
             onShutDown();
         }
 
-        public void RegisterPublisher(string publicKey, string country, string region, string entityName)
+        public void RegisterPublisher()
         {
-            throw new NotImplementedException();
-            //TODO Generate new RegistrationTransaction and add it to the blockchain
+            CLI.DisplayLine("You are not a registered publisher yet. Please provide us with the following data:");
+            var country = CLI.PromptUser("Your country:");
+            var region = CLI.PromptUser("Your region:");
+            var entityName = CLI.PromptUser("Name of your organisation:");
+
+            CLI.DisplayLine("Initializing publisher...");
+            
+            keys = EncryptionHandler.GenerateNewKeys();
+            transactionGenerator = new TransactionGenerator(keys.PrivateKey);
+            ITransaction registration = transactionGenerator.InitializeAsNewPublisher(keys.PublicKey, country, region, entityName);
+            publisherAddress = registration.TransactionId;
+            transactionBuffer.RecordTransaction(registration);
+
+            CLI.DisplayLine("Publisher initialized");
         }
 
-        public void HandleUserInput()
+        public void HandleUserInput(string input)
         {
-            throw new NotImplementedException();
-            //TODO Read in user input and handle it accordingly
+            switch (input)
+            {
+                case "validate":
+                    CLI.DisplayLine(chain.Validate(participantHandler.Clone(), null).ToString());
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void HandleIncomingRequests()
@@ -148,10 +127,39 @@ namespace Handler.Handlers
             //TODO Set up node to handle incoming requests
         }
 
-        public void HandlePublishing()
-        {
-            throw new NotImplementedException();
-            //TODO Set up node to publish periodically
+        public void HandlePublishing(object state)
+        { 
+            if (transactionBuffer.HasBlocks())
+            {
+                CLI.DisplayLine("Publishing...");
+                Chain appendix = new Chain();
+
+                while (transactionBuffer.HasBlocks())
+                {
+                    var nextBlock = transactionBuffer.GetNextBlock();
+                    nextBlock.Publisher = publisherAddress;
+
+                    if (chain.IsEmpty())
+                    {
+                        nextBlock.Index = 0;
+                        nextBlock.PreviousBlock = null;
+                        nextBlock.PreviousHash = null;
+                    }
+                    else
+                    {
+                        nextBlock.Index = chain.Blockhead.Index + 1;
+                        nextBlock.PreviousBlock = chain.Blockhead;
+                        nextBlock.PreviousHash = chain.Blockhead.Hash;
+                    }
+
+                    nextBlock.Sign(keys.PrivateKey);
+                    CLI.DisplayLine(nextBlock.AsJSON());
+                    appendix.Add(nextBlock);
+                    chain.Add(nextBlock);
+                }
+
+                //TODO Broadcast new blocks to other nodes
+            }
         }
     }
 }

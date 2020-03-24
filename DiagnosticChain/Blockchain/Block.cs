@@ -1,10 +1,10 @@
 ﻿using Blockchain.Interfaces;
-using Blockchain.Transactions;
 using Newtonsoft.Json;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -21,7 +21,7 @@ namespace Blockchain
         [XmlIgnore]
         [JsonIgnore]
         public Block PreviousBlock { get; set; }
-        public List<ITransaction> Transactions { get; set; } = new List<ITransaction>();
+        public List<ITransaction> TransactionList { get; set; } = new List<ITransaction>();
         public Guid Publisher { get; set; }
         public string PublisherVerification { get; set; }
 
@@ -62,7 +62,7 @@ namespace Blockchain
                       + Hash + "||"
                       + PreviousHash + "||";
 
-            foreach (var t in Transactions)
+            foreach (var t in TransactionList)
             {
                 ret += t.AsString() + "||";
             }
@@ -74,7 +74,7 @@ namespace Blockchain
 
         public void AddTransaction(ITransaction transaction)
         {
-            Transactions.Add(transaction);
+            TransactionList.Add(transaction);
         }
 
         public void Sign(RSAParameters privateKey)
@@ -82,6 +82,15 @@ namespace Blockchain
             Timestamp = DateTime.UtcNow;
             CalculateHash();
             PublisherVerification = EncryptionHandler.Sign(AsString(), privateKey);
+        }
+
+        internal bool HasTransaction(Guid address)
+        {
+            var hit = from transaction in TransactionList
+                      where transaction.TransactionId == address
+                      select transaction;
+
+            return hit.Count() > 0;
         }
 
         public bool ValidateSequence()

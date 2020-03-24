@@ -21,5 +21,17 @@ namespace Blockchain.Transactions
 
             return ret;
         }
+
+        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            var valid = false;
+
+            foreach (var c in chains)
+            {
+                valid |= c.HasTransaction(TreatmentTransactionAddress);
+            }
+
+            return valid;
+        }
     }
 }

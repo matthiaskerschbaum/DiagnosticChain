@@ -13,10 +13,33 @@ namespace Blockchain
         private Guid SenderAddress;
         private RSAParameters privateKey;
 
+        public TransactionGenerator(RSAParameters privateKey)
+        {
+            this.privateKey = privateKey;
+        }
+
         public TransactionGenerator(Guid SenderAddress, RSAParameters privateKey)
         {
             this.SenderAddress = SenderAddress;
             this.privateKey = privateKey;
+        }
+
+        public ITransaction InitializeAsNewPublisher(RSAParameters PublicKey, string Country, string Region, string EntityName)
+        {
+            SenderAddress = Guid.NewGuid();
+            ITransaction registration =
+                new PublisherRegistrationTransaction()
+                {
+                    TransactionId = SenderAddress
+                    ,Timestamp = DateTime.UtcNow
+                    ,Type = TransactionType.PUBLISHER
+                    ,PublicKey = PublicKey
+                    ,Country = Country
+                    ,Region = Region
+                    ,EntityName = EntityName
+                };
+
+            return SignTransaction(registration);
         }
 
         private ITransaction BasicSetup(ITransaction transaction)

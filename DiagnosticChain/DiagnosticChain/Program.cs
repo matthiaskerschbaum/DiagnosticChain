@@ -47,6 +47,9 @@ namespace DiagnosticChain
             }
             else
             {
+                CLI.DisplayLineDelimiter();
+                CLI.DisplayLineDelimiter();
+                CLI.DisplayLineDelimiter();
                 //TODO Set up node type according to user input
                 var handler = handlers[response];
                 handler.StartUp(OnHandlerShutdown);

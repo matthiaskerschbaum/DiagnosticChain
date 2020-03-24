@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Shared;
 using Blockchain.Transactions;
+using System.Collections.Generic;
 
 namespace Blockchain.Interfaces
 {
@@ -60,5 +61,7 @@ namespace Blockchain.Interfaces
         {
             return EncryptionHandler.VerifiySignature(AsString(), SenderVerification, publicKey);
         }
+
+        internal abstract bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains);
     }
 }

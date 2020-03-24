@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Blockchain.Transactions;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -24,28 +25,30 @@ namespace Blockchain
             return result;
         }
 
-        public bool Validate(ParticipantHandler participantHandler)
+        public bool Validate(ParticipantHandler participantHandler, List<Chain> context) //context = Hauptchain, falls gerade eine neu Empfangen Teilchain verarbeitet wird
         {
             var blockIsValid = true;
             var currentBlock = Blockhead;
+
+            context = (context == null) ? new List<Chain>() : context;
+            context.Add(this);
 
             while (currentBlock != null && blockIsValid)
             {
                 if (participantHandler.HasPublisher(currentBlock.Publisher))
                 {
                     blockIsValid &= currentBlock.Validate(participantHandler.GetPublisherKey(currentBlock.Publisher));
-                    foreach (var t in currentBlock.Transactions)
+                    foreach (var t in currentBlock.TransactionList)
                     {
-                        if (participantHandler.HasSender(t.SenderAddress))
+                        if (participantHandler.HasSender(t.SenderAddress) || (t.GetType() == typeof(PhysicianRegistrationTransaction)))
                         {
                             blockIsValid &= t.Validate(participantHandler.GetSenderKey(t.SenderAddress));
-                            blockIsValid &= participantHandler.HandleTransaction(t);
+                            blockIsValid &= participantHandler.HandleTransaction(t, context); //Transaction muss zuerst verarbeitet werden, damit Neuregistrierungen im nächsten Schritt schon vorhanden sind
                         } else
                         {
                             blockIsValid = false;
                         }
                     }
-                    currentBlock = currentBlock.PreviousBlock;
                 } else if (currentBlock.Index == 0) //Initializing block does not need to be validated
                 {
                     blockIsValid &= true;
@@ -53,14 +56,31 @@ namespace Blockchain
                 {
                     blockIsValid = false;
                 }
+
+                currentBlock = currentBlock.PreviousBlock;
             }
 
             return blockIsValid;
         }
 
+        internal bool HasTransaction(Guid address)
+        {
+            var ret = false;
+            var currentBlock = Blockhead;
+            
+            while (currentBlock != null)
+            {
+                ret |= currentBlock.HasTransaction(address);
+
+                currentBlock = currentBlock.PreviousBlock;
+            }
+
+            return ret;
+        }
+
         public bool Add(Block block)
         {
-            if (block.PreviousHash == Blockhead.Hash && block.Index == Blockhead.Index + 1)
+            if (Blockhead == null || (block.PreviousHash == Blockhead.Hash && block.Index == Blockhead.Index + 1))
             {
                 block.PreviousBlock = Blockhead;
                 block.ValidateSequence();
@@ -78,10 +98,10 @@ namespace Blockchain
         {
             //Get first block in chain
             var firstBlock = chain.Blockhead;
-            while (firstBlock != null) firstBlock = firstBlock.PreviousBlock;
+            while (firstBlock.PreviousBlock != null) firstBlock = firstBlock.PreviousBlock;
 
             //Add chain directly if hashes and indexes match to Blockhead
-            if (firstBlock.PreviousHash == Blockhead.Hash && firstBlock.Index == Blockhead.Index + 1)
+            if (Blockhead == null || (firstBlock.PreviousHash == Blockhead.Hash && firstBlock.Index == Blockhead.Index + 1))
             {
                 firstBlock.PreviousBlock = Blockhead;
                 firstBlock.CalculateHash();
@@ -115,6 +135,11 @@ namespace Blockchain
 
             //If no matching position is found in the blockchain, return false
             return false;
+        }
+
+        public bool IsEmpty()
+        {
+            return Blockhead == null;
         }
     }
 }

@@ -14,5 +14,34 @@ namespace Blockchain.Transactions
         {
             return base.AsString() + "|" + TransactionAddress + "|" + Vote;
         }
+
+        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            if (participantHandler.IsVotablePublisher(TransactionAddress) && participantHandler.HasPublisher(SenderAddress))
+            {
+                if (Vote)
+                {
+                    return participantHandler.CastVoteForPublisher(TransactionAddress, SenderAddress);
+                } else
+                {
+                    participantHandler.CastVoteAgainstPublisher(TransactionAddress, SenderAddress);
+                }
+            } else if (participantHandler.IsVotablePhysician(TransactionAddress) && participantHandler.HasSender(SenderAddress))
+            {
+                if (Vote)
+                {
+                    participantHandler.CastVoteForPhysician(TransactionAddress, SenderAddress);
+                }
+                else
+                {
+                    participantHandler.CastVoteAgainstPhysician(TransactionAddress, SenderAddress);
+                }
+            } else
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
