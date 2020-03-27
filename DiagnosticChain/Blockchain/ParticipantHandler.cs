@@ -14,12 +14,11 @@ namespace Blockchain
         //Der speichert eine Liste aller bekannter Publisher, Physicians und Patienten und kann Transaktionen handeln und validieren
 
         private List<Publisher> confirmedPublishers = new List<Publisher>();
-        private List<Physician> confirmedPhysicians = new List<Physician>(); //UserId, Public Key
-
+        private List<Physician> confirmedPhysicians = new List<Physician>();
         private List<Patient> confirmedPatients = new List<Patient>();
 
-        private List<Publisher> proposedPublishers = new List<Publisher>(); //UserId, Public Key 
-        private List<Physician> proposedPhysicians = new List<Physician>(); //UserId, Public Key
+        private List<Publisher> proposedPublishers = new List<Publisher>();
+        private List<Physician> proposedPhysicians = new List<Physician>();
 
         private List<Vote> pendingVotes = new List<Vote>();
 
@@ -34,6 +33,13 @@ namespace Blockchain
             ret.pendingVotes = pendingVotes.Select(v => v.Clone()).ToList();
 
             return ret;
+        }
+
+        internal bool IsEmpty()
+        {
+            return confirmedPublishers.Count == 0
+                && confirmedPhysicians.Count == 0
+                && confirmedPatients.Count == 0;
         }
 
         internal void AddPatient(Patient patient)
@@ -70,6 +76,21 @@ namespace Blockchain
             return hit.Count() > 0;
         }
 
+        public Publisher[] GetProposedPublishers()
+        {
+            return proposedPublishers.ToArray();
+        }
+
+        public Physician[] GetProposedPhysicians()
+        {
+            return proposedPhysicians.ToArray();
+        }
+
+        public Physician[] GetConfirmedPhysicians()
+        {
+            return confirmedPhysicians.ToArray();
+        }
+
         //Geht Publisher und Physicians durch, und schaut ob die existieren
         internal bool HasSender(Guid senderAddress)
         {
@@ -81,6 +102,11 @@ namespace Blockchain
                                select p;
 
             return hitPublisher.Count() > 0 || hitPhysician.Count() > 0;
+        }
+
+        public Publisher[] GetConfirmedPublishers()
+        {
+            return confirmedPublishers.ToArray();
         }
 
         internal bool HasPatient(Guid patientAddress)

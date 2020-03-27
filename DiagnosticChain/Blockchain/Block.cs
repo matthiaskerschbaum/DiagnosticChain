@@ -93,6 +93,19 @@ namespace Blockchain
             return hit.Count() > 0;
         }
 
+        internal void ListTransactions()
+        {
+            if (PreviousBlock != null)
+            {
+                PreviousBlock.ListTransactions();
+            }
+
+            foreach (var t in TransactionList)
+            {
+                CLI.DisplayLine(t.AsString());
+            }
+        }
+
         public bool ValidateSequence()
         {
             return PreviousBlock != null ? (PreviousHash == PreviousBlock.Hash && Index == PreviousBlock.Index+1) : true;
@@ -106,6 +119,23 @@ namespace Blockchain
         public void CalculateHash()
         {
             Hash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.Unicode.GetBytes(AsString())));
+        }
+
+        public bool HandleContextual(ParticipantHandler participantHandler, List<Chain> context)
+        {
+            var ret = true;
+
+            if (PreviousBlock != null)
+            {
+                ret &= PreviousBlock.HandleContextual(participantHandler, context);
+            }
+
+            foreach (var t in TransactionList)
+            {
+                ret &= t.HandleContextual(participantHandler, context);
+            }
+
+            return ret;
         }
     }
 }

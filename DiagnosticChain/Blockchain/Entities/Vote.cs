@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blockchain.Entities
 {
-    internal class Vote
+    public class Vote
     {
         public Guid VoteFor { get; set; }
         public Guid VoteFrom { get; set; }

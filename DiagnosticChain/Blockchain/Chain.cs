@@ -63,6 +63,17 @@ namespace Blockchain
             return blockIsValid;
         }
 
+        public void ListTransactions()
+        {
+            if (Blockhead != null)
+            {
+                Blockhead.ListTransactions();
+            } else
+            {
+                CLI.DisplayLine("No transactions");
+            }
+        }
+
         internal bool HasTransaction(Guid address)
         {
             var ret = false;
@@ -140,6 +151,11 @@ namespace Blockchain
         public bool IsEmpty()
         {
             return Blockhead == null;
+        }
+
+        public bool HandleContextual(ParticipantHandler participantHandler, List<Chain> context)
+        {
+            return Blockhead.HandleContextual(participantHandler, context);
         }
     }
 }

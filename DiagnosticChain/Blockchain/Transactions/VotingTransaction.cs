@@ -17,6 +17,18 @@ namespace Blockchain.Transactions
 
         internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
+            if (participantHandler.IsEmpty() && participantHandler.IsVotablePublisher(TransactionAddress)) //For the first publisher in the chain
+            {
+                if (Vote)
+                {
+                    return participantHandler.CastVoteForPublisher(TransactionAddress, SenderAddress);
+                }
+                else
+                {
+                    participantHandler.CastVoteAgainstPublisher(TransactionAddress, SenderAddress);
+                }
+            }
+
             if (participantHandler.IsVotablePublisher(TransactionAddress) && participantHandler.HasPublisher(SenderAddress))
             {
                 if (Vote)

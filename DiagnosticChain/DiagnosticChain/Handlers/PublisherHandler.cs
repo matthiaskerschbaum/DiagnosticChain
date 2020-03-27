@@ -16,6 +16,7 @@ namespace Handler.Handlers
     {
         //Delegates
         private Action onShutDown;
+        private Dictionary<string, Action> userCommands;
 
         //Publisher parameters
         Guid publisherAddress;
@@ -63,6 +64,90 @@ namespace Handler.Handlers
             CLI.DisplayLineDelimiter();
 
             //TODO Start listening to user input
+            userCommands = new Dictionary<string, Action>()
+            {
+                { "list transactions", () =>
+                    {
+                        CLI.DisplayLineDelimiter();
+                        chain.ListTransactions();
+                        CLI.DisplayLineDelimiter();
+                    }
+                }
+                , { "list physicians proposed", () =>
+                    {
+                        CLI.DisplayLine("");
+                        var proposedPhysicians = participantHandler.GetProposedPhysicians();
+                        for (int i = 0; i < proposedPhysicians.Length; i++)
+                        {
+                            CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
+                        }
+                        CLI.DisplayLine("");
+                    }
+                }
+                , { "list physicians", () =>
+                    {
+                        CLI.DisplayLine("");
+                        var confirmedPhysicians = participantHandler.GetConfirmedPhysicians();
+                        for (int i = 0; i < confirmedPhysicians.Length; i++)
+                        {
+                            CLI.DisplayLine(i + "\t" + confirmedPhysicians[i].Name + ", " + confirmedPhysicians[i].Country + ", " + confirmedPhysicians[i].Region);
+                        }
+                        CLI.DisplayLine("");
+                    }
+                }
+                , { "list publishers proposed", () =>
+                    {
+                        CLI.DisplayLine("");
+                        var proposedPublishers = participantHandler.GetProposedPublishers();
+                        for (int i = 0; i < proposedPublishers.Length; i++)
+                        {
+                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
+                        }
+                        CLI.DisplayLine("");
+                    }
+                }
+                , { "list publishers", () => 
+                    {
+                        CLI.DisplayLine("");
+                        var proposedPublishers = participantHandler.GetConfirmedPublishers();
+                        for (int i = 0; i < proposedPublishers.Length; i++)
+                        {
+                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
+                        }
+                        CLI.DisplayLine("");
+                    } 
+                }
+                , { "test transactions", () => { GenerateTestTransactions(); } }
+                , { "validate chain", () => { CLI.DisplayLine(chain.Validate(participantHandler.Clone(), null).ToString()); } }
+                , { "vote publisher", () =>
+                    {
+                        CLI.DisplayLine("");
+                        var proposedPublishers = participantHandler.GetProposedPublishers();
+
+                        CLI.DisplayLine("The following publishers are available:\n");
+                        for (int i = 0; i < proposedPublishers.Length; i++)
+                        {
+                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
+                        }
+                        CLI.DisplayLine("");
+
+                        var input = CLI.PromptUser("Please enter the index of the publisher you are voting for, or enter Q to quit: ");
+
+                        if (input == "Q") return;
+                        int index;
+                        if (int.TryParse(input, out index) && index < proposedPublishers.Length)
+                        {
+                            var vote = CLI.PromptUser("Please enter y for confirmed, or n for dismiss");
+                            var votingTransaction = transactionGenerator.GenerateVotingTransaction(proposedPublishers[index].Address, vote == "y");
+                            transactionBuffer.RecordTransaction(votingTransaction);
+                        } else
+                        {
+                            CLI.DisplayLine("Publisher not found");
+                        }
+                    }
+                }
+            };
+
             var userInput = "";
             while (userInput != "Q")
             {
@@ -71,6 +156,15 @@ namespace Handler.Handlers
             }
 
             ShutDown();
+        }
+
+        private void GenerateTestTransactions()
+        {
+            var physicianRegistration = transactionGenerator.GeneratePhysicianRegistrationTransaction(EncryptionHandler.GenerateNewKeys().PublicKey, "Austria", "Vienna", "Der Herbert");
+            var physicianVoting = transactionGenerator.GenerateVotingTransaction(physicianRegistration.TransactionId, true);
+
+            transactionBuffer.RecordTransaction(physicianRegistration);
+            transactionBuffer.RecordTransaction(physicianVoting);
         }
 
         public void ShutDown()
@@ -110,13 +204,18 @@ namespace Handler.Handlers
 
         public void HandleUserInput(string input)
         {
-            switch (input)
+            if (userCommands.ContainsKey(input))
             {
-                case "validate":
-                    CLI.DisplayLine(chain.Validate(participantHandler.Clone(), null).ToString());
-                    break;
-                default:
-                    break;
+                userCommands[input]();
+            } else
+            {
+                CLI.DisplayLine("Command not found. The following options are available:\n");
+                foreach (string key in userCommands.Keys)
+                {
+                    CLI.DisplayLine(key);
+                }
+
+                CLI.DisplayLineDelimiter();
             }
         }
 
@@ -131,7 +230,6 @@ namespace Handler.Handlers
         { 
             if (transactionBuffer.HasBlocks())
             {
-                CLI.DisplayLine("Publishing...");
                 Chain appendix = new Chain();
 
                 while (transactionBuffer.HasBlocks())
@@ -145,19 +243,24 @@ namespace Handler.Handlers
                         nextBlock.PreviousBlock = null;
                         nextBlock.PreviousHash = null;
                     }
-                    else
+                    else if (appendix.IsEmpty())
                     {
                         nextBlock.Index = chain.Blockhead.Index + 1;
-                        nextBlock.PreviousBlock = chain.Blockhead;
                         nextBlock.PreviousHash = chain.Blockhead.Hash;
+                    } else
+                    {
+                        nextBlock.Index = appendix.Blockhead.Index + 1;
+                        nextBlock.PreviousBlock = appendix.Blockhead;
+                        nextBlock.PreviousHash = appendix.Blockhead.Hash;
                     }
 
                     nextBlock.Sign(keys.PrivateKey);
-                    CLI.DisplayLine(nextBlock.AsJSON());
                     appendix.Add(nextBlock);
-                    chain.Add(nextBlock);
                 }
-
+                
+                appendix.HandleContextual(participantHandler, new List<Chain>() { chain });
+                chain.Add(appendix);
+                
                 //TODO Broadcast new blocks to other nodes
             }
         }

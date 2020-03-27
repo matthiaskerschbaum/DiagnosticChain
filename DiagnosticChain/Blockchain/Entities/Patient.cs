@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blockchain.Entities
 {
-    internal class Patient
+    public class Patient
     {
         public Guid Address { get; set; }
         public string Country { get; set; }

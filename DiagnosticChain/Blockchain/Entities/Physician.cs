@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Blockchain.Entities
 {
-    internal class Physician
+    public class Physician
     {
         public Guid Address { get; set; }
         public RSAParameters PublicKey { get; set; }

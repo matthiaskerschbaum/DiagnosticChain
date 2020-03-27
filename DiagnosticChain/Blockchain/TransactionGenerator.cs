@@ -108,6 +108,7 @@ namespace Blockchain
         public ITransaction GeneratePatientRegistrationTransaction(string Country, string Region, String Birthyear)
         {
             var transaction = (PatientRegistrationTransaction)BasicSetup(new PatientRegistrationTransaction());
+            transaction.Type = TransactionType.PATIENT;
             transaction.Country = Country;
             transaction.Region = Region;
             transaction.Birthyear = Birthyear;
@@ -117,6 +118,7 @@ namespace Blockchain
         public ITransaction GenerateVotingTransaction(Guid TransactionAddress, bool Vote)
         {
             var transaction = (VotingTransaction)BasicSetup(new VotingTransaction());
+            transaction.Type = TransactionType.VOTING;
             transaction.TransactionAddress = TransactionAddress;
             transaction.Vote = Vote;
             return SignTransaction(transaction);
