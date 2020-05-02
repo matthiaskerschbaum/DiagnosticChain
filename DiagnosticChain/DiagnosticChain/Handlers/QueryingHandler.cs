@@ -8,10 +8,7 @@ namespace Handler.Handlers
 {
     public class QueryingHandler : IHandler
     {
-        //Delegates
-        private Action onShutDown;
-
-        public void StartUp(Action onShutDown)
+        public override void StartUp(Action onShutDown, bool registerNew = false, string username = null)
         {
             CLI.DisplayLine("Starting QueryingHandler...");
 
@@ -27,7 +24,7 @@ namespace Handler.Handlers
             ShutDown();
         }
 
-        public void ShutDown()
+        public override void ShutDown()
         {
             CLI.DisplayLine("Shutting down QueryingHandler...");
 

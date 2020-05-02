@@ -1,9 +1,10 @@
-﻿using Blockchain.Transactions;
-using Shared;
+﻿using Blockchain.Interfaces;
+using Blockchain.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Blockchain
 {
@@ -11,82 +12,35 @@ namespace Blockchain
     {
         public Block Blockhead { get; set; }
 
-        public bool ValidateSequence()
+        public Chain()
         {
-            var result = true;
-            var currentBlock = Blockhead;
 
-            while (currentBlock != null)
-            {
-                result &= currentBlock.ValidateSequence();
-                currentBlock = currentBlock.PreviousBlock;
-            }
-
-            return result;
         }
 
-        public bool Validate(ParticipantHandler participantHandler, List<Chain> context) //context = Hauptchain, falls gerade eine neu Empfangen Teilchain verarbeitet wird
+        public Chain(string xml)
         {
-            var blockIsValid = true;
-            var currentBlock = Blockhead;
-
-            context = (context == null) ? new List<Chain>() : context;
-            context.Add(this);
-
-            while (currentBlock != null && blockIsValid)
+            if (xml != null)
             {
-                if (participantHandler.HasPublisher(currentBlock.Publisher))
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(xml);
+                var nodes = doc.SelectNodes("Chain/Block");
+
+                var blockList = new List<Block>();
+
+                foreach (XmlNode node in nodes)
                 {
-                    blockIsValid &= currentBlock.Validate(participantHandler.GetPublisherKey(currentBlock.Publisher));
-                    foreach (var t in currentBlock.TransactionList)
-                    {
-                        if (participantHandler.HasSender(t.SenderAddress) || (t.GetType() == typeof(PhysicianRegistrationTransaction)))
-                        {
-                            blockIsValid &= t.Validate(participantHandler.GetSenderKey(t.SenderAddress));
-                            blockIsValid &= participantHandler.HandleTransaction(t, context); //Transaction muss zuerst verarbeitet werden, damit Neuregistrierungen im nächsten Schritt schon vorhanden sind
-                        } else
-                        {
-                            blockIsValid = false;
-                        }
-                    }
-                } else if (currentBlock.Index == 0) //Initializing block does not need to be validated
-                {
-                    blockIsValid &= true;
-                } else
-                {
-                    blockIsValid = false;
+                    XmlSerializer serializer = new XmlSerializer(typeof(Block), new Type[] { typeof(ITransaction) });
+                    Block block = (Block)serializer.Deserialize(new StringReader(node.OuterXml));
+                    blockList.Add(block);
                 }
 
-                currentBlock = currentBlock.PreviousBlock;
+                blockList.Sort((x, y) => x.Index.CompareTo(y.Index));
+
+                foreach (var b in blockList)
+                {
+                    Add(b);
+                }
             }
-
-            return blockIsValid;
-        }
-
-        public void ListTransactions()
-        {
-            if (Blockhead != null)
-            {
-                Blockhead.ListTransactions();
-            } else
-            {
-                CLI.DisplayLine("No transactions");
-            }
-        }
-
-        internal bool HasTransaction(Guid address)
-        {
-            var ret = false;
-            var currentBlock = Blockhead;
-            
-            while (currentBlock != null)
-            {
-                ret |= currentBlock.HasTransaction(address);
-
-                currentBlock = currentBlock.PreviousBlock;
-            }
-
-            return ret;
         }
 
         public bool Add(Block block)
@@ -115,11 +69,11 @@ namespace Blockchain
             if (Blockhead == null || (firstBlock.PreviousHash == Blockhead.Hash && firstBlock.Index == Blockhead.Index + 1))
             {
                 firstBlock.PreviousBlock = Blockhead;
-                firstBlock.CalculateHash();
                 Blockhead = chain.Blockhead;
 
                 return true;
-            } else
+            }
+            else
             {
                 //Search matching block if the chain replaces previous blocks
                 var referenceBlock = Blockhead;
@@ -148,14 +102,136 @@ namespace Blockchain
             return false;
         }
 
+        public string AsXML()
+        {
+            XmlSerializer xsSubmit = new XmlSerializer(typeof(Block), new Type[] { typeof(ITransaction) });
+            List<Block> blockList;
+            if (Blockhead != null)
+            {
+                blockList = GetBlocks();
+            }
+            else
+            {
+                blockList = new List<Block>();
+            }
+
+            var xml = "";
+
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Chain");
+
+                    foreach (var b in blockList)
+                    {
+                        xsSubmit.Serialize(writer, b);
+                    }
+
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+
+                    writer.Close();
+
+                    xml = sww.ToString();
+                }
+            }
+
+            return xml;
+        }
+
+        public List<Block> GetBlocks()
+        {
+            List<Block> ret = new List<Block>();
+            var currentBlock = Blockhead;
+
+            while (currentBlock != null)
+            {
+                ret.Add(currentBlock);
+                currentBlock = currentBlock.PreviousBlock;
+            }
+
+            ret.Sort((x, y) => x.Index.CompareTo(y.Index));
+            return ret;
+        }
+
+        public List<ITransaction> GetTransactions()
+        {
+            List<ITransaction> ret = new List<ITransaction>();
+            var currentBlock = Blockhead;
+
+            while (currentBlock != null)
+            {
+                ret.AddRange(currentBlock.TransactionList);
+                currentBlock = currentBlock.PreviousBlock;
+            }
+
+            ret.Sort((x, y) => x.Timestamp.CompareTo(y.Timestamp));
+            return ret;
+        }
+
+        internal bool HasTransaction(Guid address)
+        {
+            var ret = false;
+            var currentBlock = Blockhead;
+
+            while (currentBlock != null)
+            {
+                ret |= currentBlock.HasTransaction(address);
+
+                currentBlock = currentBlock.PreviousBlock;
+            }
+
+            return ret;
+        }
+
         public bool IsEmpty()
         {
             return Blockhead == null;
         }
 
-        public bool HandleContextual(ParticipantHandler participantHandler, List<Chain> context)
+        public bool ProcessContracts(ParticipantHandler participantHandler, List<Chain> context)
         {
-            return Blockhead.HandleContextual(participantHandler, context);
+            var ret = true;
+            var blockList = GetBlocks();
+
+            foreach (var b in blockList)
+            {
+                ret &= b.ProcessContracts(participantHandler, context);
+            }
+
+            return ret;
+        }
+
+        public bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> context) //context = Hauptchain, falls gerade eine neu Empfangen Teilchain verarbeitet wird
+        {
+            context = (context == null) ? new List<Chain>() : context;
+            context.Add(this);
+
+            var ret = true;
+            var blockList = GetBlocks();
+
+            foreach (var b in blockList)
+            {
+                ret &= b.ValidateContextual(participantHandler, context);
+            }
+
+            return ret;
+        }
+
+        public bool ValidateSequence()
+        {
+            var result = true;
+            var currentBlock = Blockhead;
+
+            while (currentBlock != null)
+            {
+                result &= currentBlock.ValidateSequence();
+                currentBlock = currentBlock.PreviousBlock;
+            }
+
+            return result;
         }
     }
 }

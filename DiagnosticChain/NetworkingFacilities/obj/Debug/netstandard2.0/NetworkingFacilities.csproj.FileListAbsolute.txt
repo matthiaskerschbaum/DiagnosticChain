@@ -1,0 +1,8 @@
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.deps.json
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.dll
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.AssemblyInfoInputs.cache
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.AssemblyInfo.cs
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.pdb
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.csprojAssemblyReference.cache
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.dll
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.pdb

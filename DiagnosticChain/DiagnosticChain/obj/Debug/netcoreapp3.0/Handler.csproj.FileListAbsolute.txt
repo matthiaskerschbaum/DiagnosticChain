@@ -15,3 +15,14 @@ D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Handl
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Blockchain.dll
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Blockchain.pdb
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Google.Protobuf.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Grpc.Core.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\Grpc.Core.Api.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\linux\native\libgrpc_csharp_ext.x64.so
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\linux\native\libgrpc_csharp_ext.x86.so
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\osx\native\libgrpc_csharp_ext.x64.dylib
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\osx\native\libgrpc_csharp_ext.x86.dylib
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\win\native\grpc_csharp_ext.x64.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\runtimes\win\native\grpc_csharp_ext.x86.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\NetworkingFacilities.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\NetworkingFacilities.pdb

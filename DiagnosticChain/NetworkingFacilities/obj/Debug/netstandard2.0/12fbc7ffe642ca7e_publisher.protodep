@@ -1,0 +1,2 @@
+obj\Debug\netstandard2.0/Publisher.cs \
+obj\Debug\netstandard2.0/PublisherGrpc.cs: Protos/publisher.proto

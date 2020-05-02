@@ -4,6 +4,8 @@ using Handler.Interfaces;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace DiagnosticChain
 {
@@ -14,45 +16,83 @@ namespace DiagnosticChain
             ,{ "physician", new PhysicianHandler() }
             ,{ "query", new QueryingHandler() }
         };
+        private static Dictionary<string, string> users = new Dictionary<string, string>();
 
         static void Main(string[] args)
         {
             CLI.DisplayLine("Welcome to the DiagnosticChain!");
             CLI.DisplayLineDelimiter();
 
+            ReadUsers();
             SetupHandler();
+        }
+
+        private static void ReadUsers()
+        {
+            var usersRaw = FileHandler.Read(FileHandler.UsersPath);
+            
+            foreach (var line in usersRaw.Split('\n'))
+            {
+                var lineParts = line.Split('\t');
+                if (lineParts.Length == 2)
+                {
+                    users.Add(lineParts[0], lineParts[1]);
+                }
+            }
         }
 
         static void SetupHandler()
         {
-            //TODO Prompt user for node type (Special "Q" for quit)
-            var response = CLI.PromptUser("Please specify this node's type, or press Q to quit");
-            if (response == "Q")
+            //TODO Prompt for username, test whether user is already initialized, read in data if present
+            var username = CLI.PromptUser("Please provide your username. If you do not have a user on this machine yet, press C to continue. Press Q to quit");
+
+            while (!users.ContainsKey(username) && username != "C" && username != "Q")
             {
-                //TODO handle complete shutdown
-                return;
+                username = CLI.PromptUser("Username not found, try again. If you do not have a user on this machine yet, press C to continue. Press Q to quit");
             }
 
-            if (!handlers.ContainsKey(response))
+            if (username == "Q") return;
+
+            if (username == "C")
             {
-                CLI.DisplayLine("Handler type not found, please try again. The following options are available: ");
-                foreach (string key in handlers.Keys)
+                username = CLI.PromptUser("Please choose a new username for this client:");
+
+                while (users.ContainsKey(username))
                 {
-                    CLI.DisplayLine(key);
+                    username = CLI.PromptUser("This username is already taken. Please choose a different username");
                 }
 
-                CLI.DisplayLineDelimiter();
+                var handlertype = CLI.PromptUser("Please specify this node's type");
+                
+                while (!handlers.ContainsKey(handlertype))
+                {
+                    CLI.DisplayLine("Handler type not found, please try again. The following options are available: ");
+                    foreach (string key in handlers.Keys)
+                    {
+                        CLI.DisplayLine(key);
+                    }
 
-                SetupHandler();
+                    CLI.DisplayLineDelimiter();
+                    handlertype = CLI.PromptUser("");
+                }
+
+                FileHandler.Append(FileHandler.UsersPath, username + "\t" + handlertype + "\n");
+                users.Add(username, handlertype);
             }
-            else
+
+            if (File.Exists(username + FileHandler.StatePath))
+            {
+                var state = FileHandler.Read(username + FileHandler.StatePath);
+
+                XmlSerializer serializer = new XmlSerializer(handlers[users[username]].GetType());
+                IHandler handler = (IHandler)serializer.Deserialize(new StringReader(state));
+                handler.StartUp(OnHandlerShutdown);
+            } else
             {
                 CLI.DisplayLineDelimiter();
                 CLI.DisplayLineDelimiter();
                 CLI.DisplayLineDelimiter();
-                //TODO Set up node type according to user input
-                var handler = handlers[response];
-                handler.StartUp(OnHandlerShutdown);
+                handlers[users[username]].StartUp(OnHandlerShutdown, true, username);
             }
         }
 

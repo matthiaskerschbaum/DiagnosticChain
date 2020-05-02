@@ -9,13 +9,10 @@ namespace Handler.Handlers
 {
     public class PhysicianHandler : IHandler
     {
-        //Delegates
-        private Action onShutDown;
-
         //Properties
         private List<Patient> Patients = new List<Patient>();
 
-        public void StartUp(Action onShutDown)
+        public override void StartUp(Action onShutDown, bool registerNew = false, string username = null)
         {
             CLI.DisplayLine("Starting PhysicianHandler...");
 
@@ -35,7 +32,7 @@ namespace Handler.Handlers
             ShutDown();
         }
 
-        public void ShutDown()
+        public override void ShutDown()
         {
             CLI.DisplayLine("Shutting down PublisherHandler...");
 

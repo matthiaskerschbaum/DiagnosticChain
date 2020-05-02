@@ -1,38 +1,33 @@
 ﻿using Blockchain;
 using Blockchain.Interfaces;
+using Blockchain.Utilities;
+using Grpc.Core;
 using Handler.Interfaces;
+using Handler.IOHandler;
+using NetworkingFacilities.Servers;
 using Shared;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using static Shared.EncryptionHandler;
 
 namespace Handler.Handlers
 {
-    class PublisherHandler : IHandler
+    public class PublisherHandler : IHandler
     {
-        //Delegates
-        private Action onShutDown;
-        private Dictionary<string, Action> userCommands;
-
         //Publisher parameters
-        Guid publisherAddress;
-        KeyPair keys;
-        TransactionGenerator transactionGenerator;
-        TransactionBuffer transactionBuffer;
-        ParticipantHandler participantHandler;
+        public Guid publisherAddress;
+        public KeyPair keys;
+        public TransactionGenerator transactionGenerator;
+        public TransactionBuffer transactionBuffer; //TODO Change to public once serialization is dealt with
+        public ParticipantHandler participantHandler;
 
         //Parallel running tasks
-        Timer blockGenerator;
-        Timer blockProcessor;
+        internal Timer blockGenerator;
+        internal Timer blockProcessor;
+        internal Server server;
 
-        //Chain parameters
-        private Chain chain;
-
-        public void StartUp(Action onShutDown)
+        public override void StartUp(Action onShutDown, bool registerNew = false, string username = null)
         {
             CLI.DisplayLine("Starting PublisherHandler...");
 
@@ -42,194 +37,76 @@ namespace Handler.Handlers
             participantHandler = new ParticipantHandler();
             chain = new Chain();
 
-            //TODO Prompt user for username
             CLI.DisplayLine("Welcome to the publisher interface");
-            
-            //TODO Prompt for username, test whether publisher is already initialized, read in data if present
-            RegisterPublisher();
 
-            //TODO Set up node (Store all blockchain data) => Read from disk if present, prompt for URL else
-            //TODO Start listening to incoming requests
-            
-            //TODO Start publishsing job
+            InitializeChain();
+
+            if (registerNew)
+            {
+                this.username = username;
+                RegisterPublisher();
+            }
+
             CLI.DisplayLine("Starting publishing jobs...");
 
             blockGenerator = new Timer(transactionBuffer.BundleTransactions, null, 5000, 5000);
             blockProcessor = new Timer(HandlePublishing, null, 7000, 5000);
 
-            CLI.DisplayLine("Publishing jobs started");
+            //TODO Start listening to incoming requests
+            HandleIncomingRequests();
 
+            CLI.DisplayLine("Publishing jobs started");
 
             CLI.DisplayLine("PublisherHandler started. Enter Q to quit.");
             CLI.DisplayLineDelimiter();
 
-            //TODO Start listening to user input
-            userCommands = new Dictionary<string, Action>()
-            {
-                { "list transactions", () =>
-                    {
-                        CLI.DisplayLineDelimiter();
-                        chain.ListTransactions();
-                        CLI.DisplayLineDelimiter();
-                    }
-                }
-                , { "list physicians proposed", () =>
-                    {
-                        CLI.DisplayLine("");
-                        var proposedPhysicians = participantHandler.GetProposedPhysicians();
-                        for (int i = 0; i < proposedPhysicians.Length; i++)
-                        {
-                            CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
-                        }
-                        CLI.DisplayLine("");
-                    }
-                }
-                , { "list physicians", () =>
-                    {
-                        CLI.DisplayLine("");
-                        var confirmedPhysicians = participantHandler.GetConfirmedPhysicians();
-                        for (int i = 0; i < confirmedPhysicians.Length; i++)
-                        {
-                            CLI.DisplayLine(i + "\t" + confirmedPhysicians[i].Name + ", " + confirmedPhysicians[i].Country + ", " + confirmedPhysicians[i].Region);
-                        }
-                        CLI.DisplayLine("");
-                    }
-                }
-                , { "list publishers proposed", () =>
-                    {
-                        CLI.DisplayLine("");
-                        var proposedPublishers = participantHandler.GetProposedPublishers();
-                        for (int i = 0; i < proposedPublishers.Length; i++)
-                        {
-                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
-                        }
-                        CLI.DisplayLine("");
-                    }
-                }
-                , { "list publishers", () => 
-                    {
-                        CLI.DisplayLine("");
-                        var proposedPublishers = participantHandler.GetConfirmedPublishers();
-                        for (int i = 0; i < proposedPublishers.Length; i++)
-                        {
-                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
-                        }
-                        CLI.DisplayLine("");
-                    } 
-                }
-                , { "test transactions", () => { GenerateTestTransactions(); } }
-                , { "validate chain", () => { CLI.DisplayLine(chain.Validate(participantHandler.Clone(), null).ToString()); } }
-                , { "vote publisher", () =>
-                    {
-                        CLI.DisplayLine("");
-                        var proposedPublishers = participantHandler.GetProposedPublishers();
-
-                        CLI.DisplayLine("The following publishers are available:\n");
-                        for (int i = 0; i < proposedPublishers.Length; i++)
-                        {
-                            CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
-                        }
-                        CLI.DisplayLine("");
-
-                        var input = CLI.PromptUser("Please enter the index of the publisher you are voting for, or enter Q to quit: ");
-
-                        if (input == "Q") return;
-                        int index;
-                        if (int.TryParse(input, out index) && index < proposedPublishers.Length)
-                        {
-                            var vote = CLI.PromptUser("Please enter y for confirmed, or n for dismiss");
-                            var votingTransaction = transactionGenerator.GenerateVotingTransaction(proposedPublishers[index].Address, vote == "y");
-                            transactionBuffer.RecordTransaction(votingTransaction);
-                        } else
-                        {
-                            CLI.DisplayLine("Publisher not found");
-                        }
-                    }
-                }
-            };
-
-            var userInput = "";
-            while (userInput != "Q")
-            {
-                userInput = CLI.PromptUser("What do you want me to do now?");
-                HandleUserInput(userInput);
-            }
+            PublisherInputHandler inputHandler = new PublisherInputHandler(this);
+            inputHandler.Run();
 
             ShutDown();
         }
 
-        private void GenerateTestTransactions()
+        internal void GenerateTestTransactions()
         {
-            var physicianRegistration = transactionGenerator.GeneratePhysicianRegistrationTransaction(EncryptionHandler.GenerateNewKeys().PublicKey, "Austria", "Vienna", "Der Herbert");
+            CLI.DisplayLine("Generating Test transactions");
+            var physicianKeys = EncryptionHandler.GenerateNewKeys();
+            FileHandler.Log("Physician Public Key: " + physicianKeys.PublicKey.AsString());
+            FileHandler.Log("Physician Private Key: " + physicianKeys.PrivateKey.AsString());
+            var tempTransactions = new TransactionGenerator(physicianKeys.PrivateKey);
+
+            var physicianRegistration = tempTransactions.InitializeAsNewPhysician(physicianKeys.PublicKey, "Austria", "Vienna", "Der Herbert");
             var physicianVoting = transactionGenerator.GenerateVotingTransaction(physicianRegistration.TransactionId, true);
+
+            var patientRegistration = tempTransactions.GeneratePatientRegistrationTransaction("Austria", "Vienna", "1992");
+            var treatment = tempTransactions.GenerateTreatmentTransaction(physicianRegistration.TransactionId, patientRegistration.TransactionId);
+            var symptom = tempTransactions.GenerateSymptomTransaction(treatment.TransactionId, new List<string>() { "R05", "R50.80" });
+            var diagnoses = tempTransactions.GenerateDiagnosesTransaction(treatment.TransactionId, new List<string>() { "B34.2" });
 
             transactionBuffer.RecordTransaction(physicianRegistration);
             transactionBuffer.RecordTransaction(physicianVoting);
-        }
-
-        public void ShutDown()
-        {
-            CLI.DisplayLine("Shutting down PublisherHandler...");
-
-            //TODO stop listening to incoming requests
-            //TODO stop publishing job
-            blockGenerator.Dispose();
-            blockProcessor.Dispose();
-
-            //TODO Save blockchain to file
-
-            CLI.DisplayLine("PublisherHandler shut down");
-
-            //Invoke callback
-            onShutDown();
-        }
-
-        public void RegisterPublisher()
-        {
-            CLI.DisplayLine("You are not a registered publisher yet. Please provide us with the following data:");
-            var country = CLI.PromptUser("Your country:");
-            var region = CLI.PromptUser("Your region:");
-            var entityName = CLI.PromptUser("Name of your organisation:");
-
-            CLI.DisplayLine("Initializing publisher...");
-            
-            keys = EncryptionHandler.GenerateNewKeys();
-            transactionGenerator = new TransactionGenerator(keys.PrivateKey);
-            ITransaction registration = transactionGenerator.InitializeAsNewPublisher(keys.PublicKey, country, region, entityName);
-            publisherAddress = registration.TransactionId;
-            transactionBuffer.RecordTransaction(registration);
-
-            CLI.DisplayLine("Publisher initialized");
-        }
-
-        public void HandleUserInput(string input)
-        {
-            if (userCommands.ContainsKey(input))
-            {
-                userCommands[input]();
-            } else
-            {
-                CLI.DisplayLine("Command not found. The following options are available:\n");
-                foreach (string key in userCommands.Keys)
-                {
-                    CLI.DisplayLine(key);
-                }
-
-                CLI.DisplayLineDelimiter();
-            }
+            Thread.Sleep(4000);
+            transactionBuffer.RecordTransaction(patientRegistration);
+            transactionBuffer.RecordTransaction(treatment);
+            Thread.Sleep(1000);
+            transactionBuffer.RecordTransaction(symptom);
+            transactionBuffer.RecordTransaction(diagnoses);
         }
 
         public void HandleIncomingRequests()
         {
-            throw new NotImplementedException();
-            //TODO Set up node to handle incoming requests
-            //TODO Set up node to handle incoming requests
+            server = new Server
+            {
+                Services = { PublisherServer.BindService(new PublisherServerImpl()) },
+                Ports = { new ServerPort("localhost", 123456, ServerCredentials.Insecure) }
+            };
+            server.Start();
         }
 
         public void HandlePublishing(object state)
-        { 
+        {
             if (transactionBuffer.HasBlocks())
             {
+                CLI.DisplayLine("Publishing...");
                 Chain appendix = new Chain();
 
                 while (transactionBuffer.HasBlocks())
@@ -247,7 +124,8 @@ namespace Handler.Handlers
                     {
                         nextBlock.Index = chain.Blockhead.Index + 1;
                         nextBlock.PreviousHash = chain.Blockhead.Hash;
-                    } else
+                    }
+                    else
                     {
                         nextBlock.Index = appendix.Blockhead.Index + 1;
                         nextBlock.PreviousBlock = appendix.Blockhead;
@@ -257,12 +135,77 @@ namespace Handler.Handlers
                     nextBlock.Sign(keys.PrivateKey);
                     appendix.Add(nextBlock);
                 }
-                
-                appendix.HandleContextual(participantHandler, new List<Chain>() { chain });
+
+
+                appendix.ProcessContracts(participantHandler, new List<Chain>() { chain });
                 chain.Add(appendix);
-                
+
                 //TODO Broadcast new blocks to other nodes
             }
+        }
+
+        private void InitializeChain()
+        {
+            //TODO Set up node (Store all blockchain data) => Read from disk if present, prompt for URL else
+            chain = new Chain(FileHandler.Read(FileHandler.ChainPath));
+            if (chain.IsEmpty() || !chain.ValidateContextual(participantHandler, new List<Chain>() { chain }))
+            {
+                var input = CLI.PromptUser("No blockhain data found, or Blockchain file corrupted.\n " +
+                    "Please enter URL of a known node, or press C to continue as initial publisher");
+                if (input != "C")
+                {
+                    //TODO Check provided URL and connect to node
+                }
+            }
+        }
+
+        public void RegisterPublisher()
+        {
+            CLI.DisplayLine("You are not a registered publisher yet. Please provide us with the following data:");
+            var country = CLI.PromptUser("Your country:");
+            var region = CLI.PromptUser("Your region:");
+            var entityName = CLI.PromptUser("Name of your organisation:");
+
+            CLI.DisplayLine("Initializing publisher...");
+
+            keys = EncryptionHandler.GenerateNewKeys();
+            FileHandler.Log("Publisher Public Key: " + keys.PublicKey.AsString());
+            FileHandler.Log("Publisher Private Key: " + keys.PrivateKey.AsString());
+
+            if (transactionGenerator == null)
+            {
+                transactionGenerator = new TransactionGenerator(keys.PrivateKey);
+            }
+
+            ITransaction registration = transactionGenerator.InitializeAsNewPublisher(keys.PublicKey, country, region, entityName);
+            publisherAddress = registration.TransactionId;
+
+            transactionBuffer.RecordTransaction(registration);
+
+            if (chain.IsEmpty()) //The initial publisher grants themselves permission and creates the initial block
+            {
+                ITransaction vote = transactionGenerator.GenerateVotingTransaction(publisherAddress, true);
+                transactionBuffer.RecordTransaction(vote);
+            }
+
+            CLI.DisplayLine("Publisher initialized");
+        }
+
+        public override void ShutDown()
+        {
+            CLI.DisplayLine("Shutting down PublisherHandler...");
+
+            server.ShutdownAsync().Wait();
+
+            blockProcessor.Dispose();
+            blockGenerator.Dispose();
+
+            FileHandler.Save(FileHandler.ChainPath, chain.AsXML());
+            FileHandler.Save(username + FileHandler.StatePath, HandlerStateAsXML());
+
+            CLI.DisplayLine("PublisherHandler shut down");
+
+            onShutDown();
         }
     }
 }

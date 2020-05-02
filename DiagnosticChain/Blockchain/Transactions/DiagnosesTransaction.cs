@@ -1,4 +1,5 @@
 ﻿using Blockchain.Interfaces;
+using Blockchain.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +23,7 @@ namespace Blockchain.Transactions
             return ret;
         }
 
-        internal override bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        internal override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
             var valid = false;
 

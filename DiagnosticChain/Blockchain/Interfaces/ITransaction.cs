@@ -7,6 +7,8 @@ using System.Xml.Serialization;
 using Shared;
 using Blockchain.Transactions;
 using System.Collections.Generic;
+using Shared.Interfaces;
+using Blockchain.Utilities;
 
 namespace Blockchain.Interfaces
 {
@@ -17,35 +19,13 @@ namespace Blockchain.Interfaces
             , XmlInclude(typeof(SymptomsTransaction))
             , XmlInclude(typeof(TreatmentTransaction))
             , XmlInclude(typeof(VotingTransaction))]
-    public abstract class ITransaction
+    public abstract class ITransaction : WebSerializable
     {
         public TransactionType Type { get; set; }
         public Guid TransactionId { get; set; }
         public DateTime Timestamp { get; set; }
         public Guid SenderAddress { get; set; }
         public string SenderVerification { get; set; }
-
-        public string AsXML()
-        {
-            XmlSerializer xsSubmit = new XmlSerializer(this.GetType());
-            var xml = "";
-
-            using (var sww = new StringWriter())
-            {
-                using (XmlWriter writer = XmlWriter.Create(sww))
-                {
-                    xsSubmit.Serialize(writer, this);
-                    xml = sww.ToString();
-                }
-            }
-
-            return xml;
-        }
-
-        public string AsJSON()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
 
         public virtual string AsString()
         {
@@ -54,14 +34,18 @@ namespace Blockchain.Interfaces
 
         public void Sign(RSAParameters privateKey)
         {
+            FileHandler.Log("Signing transaction #" + TransactionId);
+            FileHandler.Log("With key: " + privateKey.AsString());
             SenderVerification = EncryptionHandler.Sign(AsString(), privateKey);
         }
 
-        public bool Validate(RSAParameters publicKey)
+        public bool ValidateTransactionIntegrity(RSAParameters publicKey)
         {
+            FileHandler.Log("Validating transaction #" + TransactionId);
+            FileHandler.Log("With key: " + publicKey.AsString());
             return EncryptionHandler.VerifiySignature(AsString(), SenderVerification, publicKey);
         }
 
-        internal abstract bool HandleContextual(ParticipantHandler participantHandler, List<Chain> chains);
+        internal abstract bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains);
     }
 }
