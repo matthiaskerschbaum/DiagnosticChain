@@ -88,7 +88,7 @@ namespace Handler.IOHandler
         private void ListPatients()
         {
             CLI.DisplayLine("");
-            var patients = publisherHandler.participantHandler.GetPatients();
+            var patients = publisherHandler.participantHandler.GetPatients().ToArray();
             for (int i = 0; i < patients.Length; i++)
             {
                 CLI.DisplayLine(i + "\t" + patients[i].Address + ", " + patients[i].Country + ", " + patients[i].Region + ", " + patients[i].Birthyear);
@@ -99,7 +99,7 @@ namespace Handler.IOHandler
         private void ListPhysicians()
         {
             CLI.DisplayLine("");
-            var confirmedPhysicians = publisherHandler.participantHandler.GetConfirmedPhysicians();
+            var confirmedPhysicians = publisherHandler.participantHandler.GetConfirmedPhysicians().ToArray();
             for (int i = 0; i < confirmedPhysicians.Length; i++)
             {
                 CLI.DisplayLine(i + "\t" + confirmedPhysicians[i].Name + ", " + confirmedPhysicians[i].Country + ", " + confirmedPhysicians[i].Region);
@@ -110,7 +110,7 @@ namespace Handler.IOHandler
         private void ListPhysiciansProposed()
         {
             CLI.DisplayLine("");
-            var proposedPhysicians = publisherHandler.participantHandler.GetProposedPhysicians();
+            var proposedPhysicians = publisherHandler.participantHandler.GetProposedPhysicians().ToArray();
             for (int i = 0; i < proposedPhysicians.Length; i++)
             {
                 CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
@@ -121,7 +121,7 @@ namespace Handler.IOHandler
         private void ListPublishers()
         {
             CLI.DisplayLine("");
-            var proposedPublishers = publisherHandler.participantHandler.GetConfirmedPublishers();
+            var proposedPublishers = publisherHandler.participantHandler.GetConfirmedPublishers().ToArray();
             for (int i = 0; i < proposedPublishers.Length; i++)
             {
                 CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
@@ -132,7 +132,7 @@ namespace Handler.IOHandler
         private void ListPublishersProposed()
         {
             CLI.DisplayLine("");
-            var proposedPublishers = publisherHandler.participantHandler.GetProposedPublishers();
+            var proposedPublishers = publisherHandler.participantHandler.GetProposedPublishers().ToArray();
             for (int i = 0; i < proposedPublishers.Length; i++)
             {
                 CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
@@ -171,7 +171,7 @@ namespace Handler.IOHandler
         private void VotePublisher()
         {
             CLI.DisplayLine("");
-            var proposedPublishers = publisherHandler.participantHandler.GetProposedPublishers();
+            var proposedPublishers = publisherHandler.participantHandler.GetProposedPublishers().ToArray();
 
             CLI.DisplayLine("The following publishers are available:\n");
             for (int i = 0; i < proposedPublishers.Length; i++)

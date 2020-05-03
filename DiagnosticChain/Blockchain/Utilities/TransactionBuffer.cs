@@ -9,11 +9,6 @@ namespace Blockchain.Utilities
         public ConcurrentBag<ITransaction> openTransactions = new ConcurrentBag<ITransaction>();
         public ConcurrentBag<Block> unpublishedBlocks = new ConcurrentBag<Block>();
 
-        public void RecordTransaction(ITransaction transaction)
-        {
-            openTransactions.Add(transaction);
-        }
-
         public void BundleTransactions(object state)
         {
             if (!openTransactions.IsEmpty)
@@ -47,6 +42,11 @@ namespace Blockchain.Utilities
         public bool HasBlocks()
         {
             return !unpublishedBlocks.IsEmpty;
+        }
+
+        public void RecordTransaction(ITransaction transaction)
+        {
+            openTransactions.Add(transaction);
         }
     }
 }

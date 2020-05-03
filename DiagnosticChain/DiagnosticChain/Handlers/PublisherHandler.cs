@@ -19,7 +19,7 @@ namespace Handler.Handlers
         public Guid publisherAddress;
         public KeyPair keys;
         public TransactionGenerator transactionGenerator;
-        public TransactionBuffer transactionBuffer; //TODO Change to public once serialization is dealt with
+        internal TransactionBuffer transactionBuffer; //TODO Change to public once serialization is dealt with
         public ParticipantHandler participantHandler;
 
         //Parallel running tasks

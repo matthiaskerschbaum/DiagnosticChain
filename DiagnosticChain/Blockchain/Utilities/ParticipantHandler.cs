@@ -1,5 +1,6 @@
 ﻿using Blockchain.Entities;
 using Blockchain.Interfaces;
+using Blockchain.VotingMechanisms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace Blockchain.Utilities
 
         public List<Vote> pendingVotes = new List<Vote>();
 
+        private readonly IVotingMechanism votingMechanism = new DefaultVotingMechanism();
+
         public ParticipantHandler Clone()
         {
             var ret = new ParticipantHandler();
@@ -35,106 +38,73 @@ namespace Blockchain.Utilities
             return ret;
         }
 
-        public bool IsEmpty()
-        {
-            return confirmedPublishers.Count == 0
-                && confirmedPhysicians.Count == 0
-                && confirmedPatients.Count == 0;
-        }
-
         public void AddPatient(Patient patient)
         {
             confirmedPatients.Add(patient);
         }
 
-        public void ProposePhysician(Physician physician)
+        public bool CastVoteAgainstPhysician(Guid physicianAddress, Guid senderAddress)
         {
-            proposedPhysicians.Add(physician);
+            return votingMechanism.CastVoteAgainstPhysician(this, physicianAddress, senderAddress);
         }
 
-        public void ProposePublisher(Publisher publisher)
+        public bool CastVoteAgainstPublisher(Guid publisherAddress, Guid senderAddress)
         {
-            proposedPublishers.Add(publisher);
+            return votingMechanism.CastVoteAgainstPublisher(this, publisherAddress, senderAddress);
         }
 
-        public bool HasPublisher(Guid publisher)
+        public bool CastVoteForPhysician(Guid physicianAddress, Guid senderAddress)
         {
-            var hit = from p in confirmedPublishers
-                      where p.Address == publisher
-                      select p;
-
-            return hit.Count() > 0;
+            return votingMechanism.CastVoteForPhysician(this, physicianAddress, senderAddress);
         }
 
-        public Patient[] GetPatients()
+        public bool CastVoteForPublisher(Guid publisherAddress, Guid senderAddress)
         {
-            return confirmedPatients.ToArray();
+            return votingMechanism.CastVoteForPublisher(this, publisherAddress, senderAddress);
         }
 
-        //Geht Physicians durch, und schaut ob die existieren
-        public bool HasPhysician(Guid senderAddress)
+        public List<Physician> GetConfirmedPhysicians()
         {
-            var hit = from p in confirmedPhysicians
-                      where p.Address == senderAddress
-                      select p;
-
-            return hit.Count() > 0;
+            confirmedPhysicians.Sort((x,y) => x.Address.CompareTo(y.Address));
+            return confirmedPhysicians;
         }
 
-        public Publisher[] GetProposedPublishers()
+        public List<Publisher> GetConfirmedPublishers()
         {
-            return proposedPublishers.ToArray();
+            confirmedPublishers.Sort((x,y) => x.Address.CompareTo(y.Address));
+            return confirmedPublishers;
         }
 
-        public Physician[] GetProposedPhysicians()
+        public List<Patient> GetPatients()
         {
-            return proposedPhysicians.ToArray();
+            confirmedPatients.Sort((x,y) => x.Address.CompareTo(y.Address));
+            return confirmedPatients;
         }
 
-        public Physician[] GetConfirmedPhysicians()
+        public RSAParameters GetPhysicianKey(Guid publisher)
         {
-            return confirmedPhysicians.ToArray();
-        }
-
-        //Geht Publisher und Physicians durch, und schaut ob die existieren
-        public bool HasSender(Guid senderAddress)
-        {
-            var hitPublisher = from p in confirmedPublishers
-                               where p.Address == senderAddress
-                               select p;
-            var hitPhysician = from p in confirmedPhysicians
-                               where p.Address == senderAddress
-                               select p;
-
-            return hitPublisher.Count() > 0 || hitPhysician.Count() > 0;
-        }
-
-        public Publisher[] GetConfirmedPublishers()
-        {
-            return confirmedPublishers.ToArray();
-        }
-
-        public bool HasPatient(Guid patientAddress)
-        {
-            var hit = from p in confirmedPatients
-                      where p.Address == patientAddress
-                      select p;
-
-            return hit.Count() > 0;
-        }
-
-        public RSAParameters GetPublisherKey(Guid publisher)
-        {
-            var hit = (from p in confirmedPublishers
+            var hit = (from p in confirmedPhysicians
                        where p.Address == publisher
                        select p.PublicKey).FirstOrDefault();
 
             return hit;
         }
 
-        public RSAParameters GetPhysicianKey(Guid publisher)
+        public List<Physician> GetProposedPhysicians()
         {
-            var hit = (from p in confirmedPhysicians
+            proposedPhysicians.Sort((x, y) => x.Address.CompareTo(y.Address));
+            return proposedPhysicians;
+        }
+
+        public List<Publisher> GetProposedPublishers()
+        {
+            proposedPublishers.Sort((x,y) => x.Address.CompareTo(y.Address));
+            return proposedPublishers;
+        }
+
+        public RSAParameters GetPublisherKey(Guid publisher)
+        {
+            var hit = (from p in confirmedPublishers
                        where p.Address == publisher
                        select p.PublicKey).FirstOrDefault();
 
@@ -153,10 +123,43 @@ namespace Blockchain.Utilities
             return hitPublisher.Count() > 0 ? hitPublisher.First() : hitPhysician.FirstOrDefault();
         }
 
-        //Verarbeitet je nach Transaktionstyp (Publisher werden hinzugefügt, Votes werden ausgewertet etc.)
-        public bool HandleTransaction(ITransaction t, List<Chain> context)
+        public bool HasPatient(Guid patientAddress)
         {
-            return t.ProcessContract(this, context);
+            var hit = from p in confirmedPatients
+                      where p.Address == patientAddress
+                      select p;
+
+            return hit.Count() > 0;
+        }
+
+        public bool HasPhysician(Guid senderAddress)
+        {
+            var hit = from p in confirmedPhysicians
+                      where p.Address == senderAddress
+                      select p;
+
+            return hit.Count() > 0;
+        }
+
+        public bool HasPublisher(Guid publisher)
+        {
+            var hit = from p in confirmedPublishers
+                      where p.Address == publisher
+                      select p;
+
+            return hit.Count() > 0;
+        }
+
+        public bool HasSender(Guid senderAddress)
+        {
+            return HasPublisher(senderAddress) || HasPhysician(senderAddress);
+        }
+
+        public bool IsEmpty()
+        {
+            return confirmedPublishers.Count == 0
+                && confirmedPhysicians.Count == 0
+                && confirmedPatients.Count == 0;
         }
 
         public bool IsVotablePublisher(Guid publisher)
@@ -181,177 +184,19 @@ namespace Blockchain.Utilities
             return hit.Count() > 0;
         }
 
-        public bool CastVoteForPublisher(Guid publisher, Guid senderAddress)
+        public bool ProcessTransaction(ITransaction t, List<Chain> context)
         {
-            //If the publisher has already been confirmed, do nothing
-            if (HasPublisher(publisher)) return true;
-            if (!(proposedPublishers.Where(p => p.Address == publisher).Count() > 0)) return false;
-
-            //If the publisher is still proposed
-            //Add Vote to list of votes (if not already present from the current sender)
-            var votesFromSender = from v in pendingVotes
-                                  where v.VoteFor == publisher && v.VoteFrom == senderAddress
-                                  select v;
-
-            if (votesFromSender.Count() > 0)
-            {
-                var hit = votesFromSender.FirstOrDefault();
-                hit.Confirmed = true;
-            } else
-            {
-                pendingVotes.Add(new Vote()
-                {
-                    VoteFor = publisher
-                    ,VoteFrom = senderAddress
-                    ,Confirmed = true
-                });
-            }
-
-            //Count list of valid votes for publisher => Valid votes must be more than half of currently confirmed publishers
-            //If publisher is confirmed: Transfer to confirmed publishers, remove all votes from list
-            var votesForPublisher = from v in pendingVotes
-                                    where v.VoteFor == publisher && v.Confirmed
-                                    select v;
-
-            if (votesForPublisher.Count() > Math.Floor(pendingVotes.Count() / 2.0))
-            {
-                var tranfer = proposedPublishers.Where(p => p.Address == publisher);
-                confirmedPublishers.AddRange(tranfer);
-                proposedPublishers.RemoveAll(p => p.Address == publisher);
-                pendingVotes.RemoveAll(v => v.VoteFor == publisher);
-            }
-
-            return true;
+            return t.ProcessContract(this, context);
         }
 
-        public bool CastVoteAgainstPublisher(Guid publisher, Guid senderAddress)
+        public void ProposePhysician(Physician physician)
         {
-            //If the publisher is not confirmed, do nothing
-            if (!HasPublisher(publisher)) return false;
-
-            //Add Vote to list of votes (if not already present from the current sender)
-            var votesFromSender = from v in pendingVotes
-                                  where v.VoteFor == publisher && v.VoteFrom == senderAddress
-                                  select v;
-
-            if (votesFromSender.Count() > 0)
-            {
-                var hit = votesFromSender.FirstOrDefault();
-                hit.Confirmed = false;
-            }
-            else
-            {
-                pendingVotes.Add(new Vote()
-                {
-                    VoteFor = publisher
-                    ,
-                    VoteFrom = senderAddress
-                    ,
-                    Confirmed = false
-                });
-            }
-
-            //Count list of valid votes against publisher => Valid votes must be more than half of currently confirmed publishers
-            //If publisher is dismissed: Delete from List
-            var votesAgainstPublisher = from v in pendingVotes
-                                    where v.VoteFor == publisher && !v.Confirmed
-                                    select v;
-
-            if (votesAgainstPublisher.Count() > Math.Floor(confirmedPublishers.Count() / 2.0))
-            {
-                confirmedPublishers.RemoveAll(p => p.Address == publisher);
-                pendingVotes.RemoveAll(v => v.VoteFor == publisher);
-            }
-
-            return true;
+            proposedPhysicians.Add(physician);
         }
 
-        public bool CastVoteForPhysician(Guid physician, Guid senderAddress)
+        public void ProposePublisher(Publisher publisher)
         {
-            //If the physician has already been confirmed, do nothing
-            if (HasPhysician(physician)) return true;
-            if (!(proposedPhysicians.Where(p => p.Address == physician).Count() > 0)) return false;
-
-            //If the physician is still proposed
-            //Add Vote to list of votes (if not already present from the current sender)
-            var votesFromSender = from v in pendingVotes
-                                  where v.VoteFor == physician && v.VoteFrom == senderAddress
-                                  select v;
-
-            if (votesFromSender.Count() > 0)
-            {
-                var hit = votesFromSender.FirstOrDefault();
-                hit.Confirmed = true;
-            }
-            else
-            {
-                pendingVotes.Add(new Vote()
-                {
-                    VoteFor = physician
-                    ,
-                    VoteFrom = senderAddress
-                    ,
-                    Confirmed = true
-                });
-            }
-
-            //Count list of valid votes for physician => Valid votes must be at least 3 in total (or equal to number of confirmed publishers)
-            //If publisher is confirmed: Transfer to confirmed publishers, remove all votes from list
-            var votesForPhysician = from v in pendingVotes
-                                    where v.VoteFor == physician && v.Confirmed
-                                    select v;
-
-            if (votesForPhysician.Count() > 3 || votesForPhysician.Count() == confirmedPublishers.Count())
-            {
-                var tranfer = proposedPhysicians.Where(p => p.Address == physician);
-                confirmedPhysicians.AddRange(tranfer);
-                proposedPhysicians.RemoveAll(p => p.Address == physician);
-                pendingVotes.RemoveAll(v => v.VoteFor == physician);
-            }
-
-            return true;
-        }
-
-        public bool CastVoteAgainstPhysician(Guid physician, Guid senderAddress)
-        {
-            //If the publisher is not confirmed, do nothing
-            if (!HasPhysician(physician)) return false;
-
-            //Add Vote to list of votes (if not already present from the current sender)
-            var votesFromSender = from v in pendingVotes
-                                  where v.VoteFor == physician && v.VoteFrom == senderAddress
-                                  select v;
-
-            if (votesFromSender.Count() > 0)
-            {
-                var hit = votesFromSender.FirstOrDefault();
-                hit.Confirmed = false;
-            }
-            else
-            {
-                pendingVotes.Add(new Vote()
-                {
-                    VoteFor = physician
-                    ,
-                    VoteFrom = senderAddress
-                    ,
-                    Confirmed = false
-                });
-            }
-
-            //Count list of valid votes against publisher => Valid votes must be more than half of currently confirmed publishers
-            //If publisher is dismissed: Delete from List
-            var votesAgainstPhysician = from v in pendingVotes
-                                        where v.VoteFor == physician && !v.Confirmed
-                                        select v;
-
-            if (votesAgainstPhysician.Count() > Math.Floor(confirmedPublishers.Count() / 2.0))
-            {
-                confirmedPhysicians.RemoveAll(p => p.Address == physician);
-                pendingVotes.RemoveAll(v => v.VoteFor == physician);
-            }
-
-            return true;
+            proposedPublishers.Add(publisher);
         }
 
     }

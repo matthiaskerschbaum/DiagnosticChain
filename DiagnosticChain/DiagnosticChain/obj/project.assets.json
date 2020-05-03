@@ -302,9 +302,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain\\Handler.csproj",
-      "projectName": "Handler",
-      "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain\\Handler.csproj",
+      "projectUniqueName": "D:\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain.csproj",
+      "projectName": "DiagnosticChain",
+      "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain.csproj",
       "packagesPath": "C:\\Users\\Matthias\\.nuget\\packages\\",
       "outputPath": "D:\\DiagnosticChain\\DiagnosticChain\\DiagnosticChain\\obj\\",
       "projectStyle": "PackageReference",

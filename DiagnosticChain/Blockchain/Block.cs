@@ -123,8 +123,8 @@ namespace Blockchain
 
                 blockIsValid &= registration != null && vote != null;
                 blockIsValid &= ValidateBlockIntegrity(registration.PublicKey);
-                blockIsValid &= participantHandler.HandleTransaction(registration, context);
-                blockIsValid &= participantHandler.HandleTransaction(vote, context);
+                blockIsValid &= participantHandler.ProcessTransaction(registration, context);
+                blockIsValid &= participantHandler.ProcessTransaction(vote, context);
             }
             //Handle new Publisher registration
             else if (TransactionList.Count() == 1 && TransactionList[0].GetType() == typeof(PublisherRegistrationTransaction)) 
@@ -132,7 +132,7 @@ namespace Blockchain
                 var registration = (PublisherRegistrationTransaction)TransactionList[0];
 
                 blockIsValid &= ValidateBlockIntegrity(registration.PublicKey);
-                blockIsValid &= participantHandler.HandleTransaction(registration, context);
+                blockIsValid &= participantHandler.ProcessTransaction(registration, context);
             }
             //Handle regular block
             else if (participantHandler.HasPublisher(Publisher)) 
@@ -145,12 +145,12 @@ namespace Blockchain
                     {
                         PhysicianRegistrationTransaction temp = (PhysicianRegistrationTransaction)t;
                         blockIsValid &= temp.ValidateTransactionIntegrity(temp.PublicKey);
-                        blockIsValid &= participantHandler.HandleTransaction(temp, context);
+                        blockIsValid &= participantHandler.ProcessTransaction(temp, context);
                     }
                     else if (participantHandler.HasSender(t.SenderAddress))
                     {
                         blockIsValid &= t.ValidateTransactionIntegrity(participantHandler.GetSenderKey(t.SenderAddress));
-                        blockIsValid &= participantHandler.HandleTransaction(t, context);
+                        blockIsValid &= participantHandler.ProcessTransaction(t, context);
                     }
                     else
                     {

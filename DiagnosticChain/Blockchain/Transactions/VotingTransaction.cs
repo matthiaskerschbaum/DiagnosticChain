@@ -11,7 +11,7 @@ namespace Blockchain.Transactions
         public Guid TransactionAddress { get; set; }
         public bool Vote { get; set; }
 
-        public override string AsString()
+        internal override string AsString()
         {
             return base.AsString() + "|" + TransactionAddress + "|" + Vote;
         }

@@ -27,19 +27,19 @@ namespace Blockchain.Interfaces
         public Guid SenderAddress { get; set; }
         public string SenderVerification { get; set; }
 
-        public virtual string AsString()
+        internal virtual string AsString()
         {
             return Type + "|" + TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
         }
 
-        public void Sign(RSAParameters privateKey)
+        internal void Sign(RSAParameters privateKey)
         {
             FileHandler.Log("Signing transaction #" + TransactionId);
             FileHandler.Log("With key: " + privateKey.AsString());
             SenderVerification = EncryptionHandler.Sign(AsString(), privateKey);
         }
 
-        public bool ValidateTransactionIntegrity(RSAParameters publicKey)
+        internal bool ValidateTransactionIntegrity(RSAParameters publicKey)
         {
             FileHandler.Log("Validating transaction #" + TransactionId);
             FileHandler.Log("With key: " + publicKey.AsString());

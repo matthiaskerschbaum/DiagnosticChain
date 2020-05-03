@@ -29,14 +29,17 @@ namespace DiagnosticChain
 
         private static void ReadUsers()
         {
-            var usersRaw = FileHandler.Read(FileHandler.UsersPath);
-            
-            foreach (var line in usersRaw.Split('\n'))
+            if (File.Exists(FileHandler.UsersPath))
             {
-                var lineParts = line.Split('\t');
-                if (lineParts.Length == 2)
+                var usersRaw = FileHandler.Read(FileHandler.UsersPath);
+
+                foreach (var line in usersRaw.Split('\n'))
                 {
-                    users.Add(lineParts[0], lineParts[1]);
+                    var lineParts = line.Split('\t');
+                    if (lineParts.Length == 2)
+                    {
+                        users.Add(lineParts[0], lineParts[1]);
+                    }
                 }
             }
         }
