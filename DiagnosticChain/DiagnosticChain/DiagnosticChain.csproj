@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Blockchain\Blockchain.csproj" />
     <ProjectReference Include="..\NetworkingFacilities\NetworkingFacilities.csproj" />
+    <ProjectReference Include="..\NodeManagement\NodeManagement.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 

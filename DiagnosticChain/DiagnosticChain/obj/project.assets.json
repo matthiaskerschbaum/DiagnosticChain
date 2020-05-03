@@ -117,6 +117,19 @@
           "bin/placeholder/NetworkingFacilities.dll": {}
         }
       },
+      "NodeManagement/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Blockchain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NodeManagement.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NodeManagement.dll": {}
+        }
+      },
       "Shared/1.0.0": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
@@ -280,6 +293,11 @@
       "path": "../NetworkingFacilities/NetworkingFacilities.csproj",
       "msbuildProject": "../NetworkingFacilities/NetworkingFacilities.csproj"
     },
+    "NodeManagement/1.0.0": {
+      "type": "project",
+      "path": "../NodeManagement/NodeManagement.csproj",
+      "msbuildProject": "../NodeManagement/NodeManagement.csproj"
+    },
     "Shared/1.0.0": {
       "type": "project",
       "path": "../Shared/Shared.csproj",
@@ -291,6 +309,7 @@
       "Blockchain >= 1.0.0",
       "Grpc.Core >= 2.28.1",
       "NetworkingFacilities >= 1.0.0",
+      "NodeManagement >= 1.0.0",
       "Shared >= 1.0.0"
     ]
   },
@@ -332,6 +351,9 @@
             },
             "D:\\DiagnosticChain\\DiagnosticChain\\NetworkingFacilities\\NetworkingFacilities.csproj": {
               "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\NetworkingFacilities\\NetworkingFacilities.csproj"
+            },
+            "D:\\DiagnosticChain\\DiagnosticChain\\NodeManagement\\NodeManagement.csproj": {
+              "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\NodeManagement\\NodeManagement.csproj"
             },
             "D:\\DiagnosticChain\\DiagnosticChain\\Shared\\Shared.csproj": {
               "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\Shared\\Shared.csproj"

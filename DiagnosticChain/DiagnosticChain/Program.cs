@@ -1,4 +1,5 @@
-﻿using Handler;
+﻿using DiagnosticChain.UserInterface;
+using Handler;
 using Handler.Handlers;
 using Handler.Interfaces;
 using Shared;
@@ -20,11 +21,12 @@ namespace DiagnosticChain
 
         static void Main(string[] args)
         {
-            CLI.DisplayLine("Welcome to the DiagnosticChain!");
-            CLI.DisplayLineDelimiter();
+            new SetupInterface().Interact();
+            //CLI.DisplayLine("Welcome to the DiagnosticChain!");
+            //CLI.DisplayLineDelimiter();
 
-            ReadUsers();
-            SetupHandler();
+            //ReadUsers();
+            //SetupHandler();
         }
 
         private static void ReadUsers()

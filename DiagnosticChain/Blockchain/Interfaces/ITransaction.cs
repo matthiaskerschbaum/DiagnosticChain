@@ -32,20 +32,18 @@ namespace Blockchain.Interfaces
             return Type + "|" + TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
         }
 
-        internal void Sign(RSAParameters privateKey)
+        public void Sign(RSAParameters privateKey)
         {
-            FileHandler.Log("Signing transaction #" + TransactionId);
-            FileHandler.Log("With key: " + privateKey.AsString());
             SenderVerification = EncryptionHandler.Sign(AsString(), privateKey);
         }
 
-        internal bool ValidateTransactionIntegrity(RSAParameters publicKey)
+        public bool ValidateTransactionIntegrity(RSAParameters publicKey)
         {
-            FileHandler.Log("Validating transaction #" + TransactionId);
-            FileHandler.Log("With key: " + publicKey.AsString());
             return EncryptionHandler.VerifiySignature(AsString(), SenderVerification, publicKey);
         }
 
-        internal abstract bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains);
+        public abstract bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains);
+
+        public abstract bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains);
     }
 }

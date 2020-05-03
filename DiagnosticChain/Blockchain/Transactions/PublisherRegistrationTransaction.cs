@@ -20,6 +20,11 @@ namespace Blockchain.Transactions
             return base.AsString() + "|" + PublicKey + "|" + Country + "|" + Region + "|" + EntityName;
         }
 
+        internal override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            return ValidateTransactionIntegrity(PublicKey);
+        }
+
         internal override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
             participantHandler.ProposePublisher(new Publisher()

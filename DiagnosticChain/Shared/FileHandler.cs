@@ -9,7 +9,7 @@ namespace Shared
     {
         public static readonly string ChainPath = "Blockchain.xml";
         public static readonly string LogPath = "Log.txt";
-        public static readonly string StatePath = "HandlerState.xml";
+        public static readonly string StatePath = "UserState.xml";
         public static readonly string UsersPath = "Users.txt";
 
         public static void Save(string path, string s)

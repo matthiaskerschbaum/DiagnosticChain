@@ -16,7 +16,12 @@ namespace Blockchain.Transactions
             return base.AsString() + "|" + TransactionAddress + "|" + Vote;
         }
 
-        internal override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
+        public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
             if (participantHandler.IsEmpty() && participantHandler.IsVotablePublisher(TransactionAddress)) //For the first publisher in the chain
             {

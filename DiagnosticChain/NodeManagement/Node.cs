@@ -1,31 +1,31 @@
 ﻿using Blockchain;
 using Blockchain.Interfaces;
+using Blockchain.Utilities;
 using NodeManagement.Entities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace NodeManagement
 {
-    class Node
+    public class Node
     {
+        //User data
+        public UserProperties User;
+
         //Blockchain data
         private Chain chain;
-        private BlockingCollection<Uri> knownNodes;
-        private BlockingCollection<ITransaction> openTransactions;
-        private BlockingCollection<Block> unpublishedBlocks;
         private TimeSpan archiveTime;
-        private BlockingCollection<Publisher> acceptedPublishers;
-        private BlockingCollection<Publisher> proposedPublishers;
-        private BlockingCollection<Physician> acceptedPhysicians;
-        private BlockingCollection<Physician> proposedPhysicians;
-        private BlockingCollection<Patient> patients;
 
-        //User data
-        private Guid UserAddress;
-        private string privateKey;
-        private string publicKey;
+        //Blockchain utilities
+        internal TransactionBuffer transactionBuffer;
+        public ParticipantHandler participantHandler;
+
+        //Parallel running tasks
+        internal Timer blockGenerator;
+        internal Timer blockProcessor;
 
         public void RegisterAt(Uri node)
         {
@@ -52,6 +52,11 @@ namespace NodeManagement
             //TODO Neuen Node an alle KnownNodes verbreiten
         }
 
+        public bool IsChainInitialized()
+        {
+            return !chain.IsEmpty();
+        }
+
         public void OnReceiveSetupRequest(Uri requestingNode)
         {
             throw new NotImplementedException();
@@ -60,7 +65,7 @@ namespace NodeManagement
             //TODO Neuen Node an alle KnownNodes verbreiten
         }
 
-        public void OnReceivNewNode(Uri senderId, Uri newNode)
+        public void OnReceiveNewNode(Uri senderId, Uri newNode)
         {
             throw new NotImplementedException();
             //TODO Überprüfen, ob Sender ein KnownNode ist
@@ -69,9 +74,10 @@ namespace NodeManagement
 
         public void OnReveiceTransaction(ITransaction transaction)
         {
-            throw new NotImplementedException();
-            //TODO Transaction nach aktuellem Wissensstand validieren
-            //TODO Wenn gültig in Liste an offenen Transactions hinzufügen, sonst RejectMessage zurückschicken
+            if (transaction.ValidateContextual(participantHandler, new List<Chain>() { chain }))
+            {
+                transactionBuffer.RecordTransaction(transaction);
+            }
         }
 
         public void OnReceiveChain(Chain chain)
@@ -99,20 +105,61 @@ namespace NodeManagement
             //TODO Chain an alle KnownNodes schicken
         }
 
-        public void GenerateBlocksFromOpenTransactions()
+        public void RequestChainInitialization(ITransaction initialPublisher, ITransaction initialVote)
         {
-            throw new NotImplementedException();
-            //TODO Alle offenen Transactions in Block zusammenfassen
-            //TODO Block in UnpublishedBlocks speichern
+            if (chain.IsEmpty())
+            {
+                transactionBuffer.RecordTransaction(initialPublisher);
+                transactionBuffer.RecordTransaction(initialVote);
+            }
         }
 
-        public void PublishOpenBlocks()
+        public void StartPublishing()
         {
-            throw new NotImplementedException();
-            //TODO Alle Unpublished Blocks einen nach dem anderen an aktuelle Blockchain anhängen
-            //TODO Währenddessen in seperater Chain speichern (Wird dann extra verschickt)
-            //TODO Währenddessen aus UnpublishedBlocks entfernen
-            //TODO Chain mit neuen Blocks an alle KnownNodes verschicken
+            blockGenerator = new Timer(transactionBuffer.BundleTransactions, null, 5000, 5000);
+            blockProcessor = new Timer(PublishOpenBlocks, null, 7000, 5000);
+        }
+
+        public void PublishOpenBlocks(object state)
+        {
+            //TODO Überprüfen, ob Node überhaupt publishen darf (Registrierung eines neuen Publishers muss durchgehen)
+
+            if (transactionBuffer.HasBlocks())
+            {
+                Chain appendix = new Chain();
+
+                while (transactionBuffer.HasBlocks())
+                {
+                    var nextBlock = transactionBuffer.GetNextBlock();
+                    nextBlock.Publisher = User.PublisherAddress;
+
+                    if (chain.IsEmpty())
+                    {
+                        nextBlock.Index = 0;
+                        nextBlock.PreviousBlock = null;
+                        nextBlock.PreviousHash = null;
+                    }
+                    else if (appendix.IsEmpty())
+                    {
+                        nextBlock.Index = chain.Blockhead.Index + 1;
+                        nextBlock.PreviousHash = chain.Blockhead.Hash;
+                    }
+                    else
+                    {
+                        nextBlock.Index = appendix.Blockhead.Index + 1;
+                        nextBlock.PreviousBlock = appendix.Blockhead;
+                        nextBlock.PreviousHash = appendix.Blockhead.Hash;
+                    }
+
+                    nextBlock.Sign(User.Keys.PrivateKey);
+                    appendix.Add(nextBlock);
+                }
+
+                appendix.ProcessContracts(participantHandler, new List<Chain>() { chain });
+                chain.Add(appendix);
+            }
+
+            //TODO Appendix an alle KnownNodes verschicken
             //TODO Nodes flaggen, von denen keine Antwort kommt
         }
 
