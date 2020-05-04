@@ -1,4 +1,4 @@
-﻿using Handler.Entities;
+﻿using DiagnosticChain.Entities;
 using Handler.Interfaces;
 using Shared;
 using System;

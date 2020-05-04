@@ -18,12 +18,12 @@ namespace Blockchain.Transactions
             return base.AsString() + "|" + Country + "|" + Region + "|" + Birthyear;
         }
 
-        internal override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
             throw new NotImplementedException();
         }
 
-        internal override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
+        public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
             if (participantHandler.HasPatient(TransactionId))
             {

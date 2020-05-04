@@ -2,6 +2,7 @@
 using Blockchain.Interfaces;
 using Blockchain.Utilities;
 using NodeManagement.Entities;
+using Shared;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,16 +17,21 @@ namespace NodeManagement
         public UserProperties User;
 
         //Blockchain data
-        private Chain chain;
+        private Chain chain = new Chain();
         private TimeSpan archiveTime;
 
         //Blockchain utilities
-        internal TransactionBuffer transactionBuffer;
-        public ParticipantHandler participantHandler;
+        internal TransactionBuffer transactionBuffer = new TransactionBuffer();
+        public ParticipantHandler participantHandler = new ParticipantHandler();
 
         //Parallel running tasks
         internal Timer blockGenerator;
         internal Timer blockProcessor;
+
+        public ChainStatistics GetChainStatisics()
+        {
+            return new ChainStatistics(chain);
+        }
 
         public void RegisterAt(Uri node)
         {
@@ -33,6 +39,31 @@ namespace NodeManagement
             //TODO Verbindung zu angegebenem Node aufbauen und eine RegistrationMessage schicken
             //TODO ErrorHandling, wenn Node nicht erreichbar ist
             //TODO Node zu KnownNodes hinzufügen, wenn Verbindung und Anfrage erfolgreich
+        }
+
+        public List<Blockchain.Entities.Physician> GetConfirmedPhysicians()
+        {
+            return participantHandler.GetConfirmedPhysicians();
+        }
+
+        public List<Blockchain.Entities.Publisher> GetConfirmedPublishers()
+        {
+            return participantHandler.GetConfirmedPublishers();
+        }
+
+        public List<Blockchain.Entities.Physician> GetProposedPhysicians()
+        {
+            return participantHandler.GetProposedPhysicians();
+        }
+
+        public List<Blockchain.Entities.Patient> GetPatients()
+        {
+            return participantHandler.GetPatients();
+        }
+
+        public List<Blockchain.Entities.Publisher> GetProposedPublishers()
+        {
+            return participantHandler.GetProposedPublishers();
         }
 
         public void RequestChainAt(Uri node)
@@ -65,6 +96,11 @@ namespace NodeManagement
             //TODO Neuen Node an alle KnownNodes verbreiten
         }
 
+        public void SaveChain()
+        {
+            FileHandler.Save(FileHandler.ChainPath, chain.AsXML());
+        }
+
         public void OnReceiveNewNode(Uri senderId, Uri newNode)
         {
             throw new NotImplementedException();
@@ -78,6 +114,13 @@ namespace NodeManagement
             {
                 transactionBuffer.RecordTransaction(transaction);
             }
+        }
+
+        public void LoadChain()
+        {
+            chain = new Chain(FileHandler.Read(FileHandler.ChainPath));
+            participantHandler = new ParticipantHandler();
+            chain.ProcessContracts(participantHandler, new List<Chain>() { chain });
         }
 
         public void OnReceiveChain(Chain chain)
@@ -118,6 +161,12 @@ namespace NodeManagement
         {
             blockGenerator = new Timer(transactionBuffer.BundleTransactions, null, 5000, 5000);
             blockProcessor = new Timer(PublishOpenBlocks, null, 7000, 5000);
+        }
+
+        public void StopPublishing()
+        {
+            blockGenerator.Dispose();
+            blockProcessor.Dispose();
         }
 
         public void PublishOpenBlocks(object state)

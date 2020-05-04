@@ -11,6 +11,7 @@
           "Blockchain": "1.0.0",
           "Grpc.Core": "2.28.1",
           "NetworkingFacilities": "1.0.0",
+          "NodeManagement": "1.0.0",
           "Shared": "1.0.0"
         },
         "runtime": {
@@ -115,6 +116,14 @@
           "NetworkingFacilities.dll": {}
         }
       },
+      "NodeManagement/1.0.0": {
+        "dependencies": {
+          "Blockchain": "1.0.0"
+        },
+        "runtime": {
+          "NodeManagement.dll": {}
+        }
+      },
       "Shared/1.0.0": {
         "dependencies": {
           "Newtonsoft.Json": "12.0.3"
@@ -179,6 +188,11 @@
       "sha512": ""
     },
     "NetworkingFacilities/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NodeManagement/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

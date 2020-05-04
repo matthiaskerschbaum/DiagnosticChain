@@ -21,12 +21,17 @@ namespace DiagnosticChain
 
         static void Main(string[] args)
         {
-            new SetupInterface().Interact();
+            new SetupInterface().Interact(OnShutDown);
             //CLI.DisplayLine("Welcome to the DiagnosticChain!");
             //CLI.DisplayLineDelimiter();
 
             //ReadUsers();
             //SetupHandler();
+        }
+
+        private static void OnShutDown()
+        {
+
         }
 
         private static void ReadUsers()

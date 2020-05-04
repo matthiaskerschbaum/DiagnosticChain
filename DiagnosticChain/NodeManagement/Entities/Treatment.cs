@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NodeManagement.Entities
 {
-    class Treatment
+    public class Treatment
     {
         public Guid TreatmentAddress { get; set; }
         public List<string> Symptoms { get; set; }

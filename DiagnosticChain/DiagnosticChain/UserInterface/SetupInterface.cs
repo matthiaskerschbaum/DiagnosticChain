@@ -10,22 +10,27 @@ namespace DiagnosticChain.UserInterface
     class SetupInterface : IUserInterface
     {
         SetupController controller;
+        private Action onCompletion;
 
-        private string abortionCode = "Q";
-
-        public void Interact()
+        public void Interact(Action onCompletion)
         {
+            this.onCompletion = onCompletion;
             controller = new SetupController();
             CLI.DisplayLine("Welcome to the DiagnosticChain!");
             CLI.DisplayLineDelimiter();
 
             var userInput = PromptUsername();
-            if (userInput == abortionCode) return;
+            if (userInput == UIConstants.abortionCode) return;
 
             if (userInput == "") userInput = SetupNewUser();
-            if (userInput == abortionCode) return;
+            if (userInput == UIConstants.abortionCode) return;
 
-            controller.SetupForUser(userInput).Interact();
+            controller.SetupForUser(userInput).Interact(OnControllerCompletion);
+        }
+
+        private void OnControllerCompletion()
+        {
+            Interact(onCompletion);
         }
 
         public void PrepareForUser(string username)
@@ -36,10 +41,10 @@ namespace DiagnosticChain.UserInterface
         public string PromptNodeType()
         {
             var nodetypes = controller.GetNodeTypes();
-            var promptMessage = "Please specify this node's type. Enter " + abortionCode + " to quit";
+            var promptMessage = "Please specify this node's type. Enter " + UIConstants.abortionCode + " to quit";
             var response = CLI.PromptUser(promptMessage);
 
-            while (!nodetypes.Contains(response) && response != abortionCode)
+            while (!nodetypes.Contains(response) && response != UIConstants.abortionCode)
             {
                 CLI.DisplayLine("Handler type not found, please try again. The following options are available: ");
                 foreach (string n in nodetypes)
@@ -57,10 +62,10 @@ namespace DiagnosticChain.UserInterface
         public string PromptUsername()
         {
             var newUserCode = "C";
-            var promptMessage = "Please provide your username. If you do not have a user on this machine yet, enter " + newUserCode + " to continue. Enter " + abortionCode + " to quit";
+            var promptMessage = "Please provide your username. If you do not have a user on this machine yet, enter " + newUserCode + " to continue. Enter " + UIConstants.abortionCode + " to quit";
             var response = CLI.PromptUser(promptMessage);
 
-            while (!controller.HasUser(response) && response != abortionCode) {
+            while (!controller.HasUser(response) && response != UIConstants.abortionCode) {
                 if (response == newUserCode) return "";
 
                 CLI.DisplayLine("User \"" + response + "\" not found");
@@ -72,19 +77,19 @@ namespace DiagnosticChain.UserInterface
 
         public string SetupNewUser()
         {
-            var promptMessage = "Please choose a new username for this client. Enter " + abortionCode + " to quit";
+            var promptMessage = "Please choose a new username for this client. Enter " + UIConstants.abortionCode + " to quit";
             var response = CLI.PromptUser(promptMessage);
 
-            while (controller.HasUser(response) && response != abortionCode)
+            while (controller.HasUser(response) && response != UIConstants.abortionCode)
             {
                 CLI.DisplayLine("Username \"" + response + "\" is already taken");
                 response = CLI.PromptUser(promptMessage);
             }
 
-            if (response == abortionCode) return abortionCode;
+            if (response == UIConstants.abortionCode) return UIConstants.abortionCode;
 
             var nodetype = PromptNodeType();
-            if (nodetype == abortionCode) return abortionCode;
+            if (nodetype == UIConstants.abortionCode) return UIConstants.abortionCode;
 
             controller.AddUser(response, nodetype);
             return response;

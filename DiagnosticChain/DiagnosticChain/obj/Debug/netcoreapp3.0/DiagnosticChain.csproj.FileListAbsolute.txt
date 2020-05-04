@@ -26,3 +26,5 @@ D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\Diagn
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\DiagnosticChain.csproj.CopyComplete
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\DiagnosticChain.dll
 D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\obj\Debug\netcoreapp3.0\DiagnosticChain.pdb
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\NodeManagement.dll
+D:\DiagnosticChain\DiagnosticChain\DiagnosticChain\bin\Debug\netcoreapp3.0\NodeManagement.pdb

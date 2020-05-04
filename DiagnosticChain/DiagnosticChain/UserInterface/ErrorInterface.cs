@@ -20,7 +20,7 @@ namespace DiagnosticChain.UserInterface
             this.message = message;
         }
 
-        public void Interact()
+        public void Interact(Action onCompletion)
         {
             CLI.DisplayLine(message == "" ? "A fatal error occured" : message);
             CLI.DisplayLine("DiagnosticChain is shutting down. Bye!");

@@ -23,12 +23,12 @@ namespace Blockchain.Transactions
             return ret;
         }
 
-        internal override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
+        public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
             throw new NotImplementedException();
         }
 
-        internal override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
+        public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
             var valid = false;
 

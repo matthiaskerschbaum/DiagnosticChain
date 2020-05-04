@@ -6,7 +6,7 @@ namespace DiagnosticChain.Interfaces
 {
     interface IUserInterface
     {
-        public void Interact();
+        public void Interact(Action onCompletion);
         public void PrepareForUser(string username);
     }
 }
