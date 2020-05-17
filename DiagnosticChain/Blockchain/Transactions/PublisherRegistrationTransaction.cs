@@ -22,21 +22,32 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            return ValidateTransactionIntegrity(PublicKey);
+            return SenderAddress == TransactionId
+                && ValidateTransactionIntegrity(PublicKey)
+                && !participantHandler.HasPublisher(TransactionId);
         }
 
         public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            participantHandler.ProposePublisher(new Publisher()
+            if (ValidateContextual(participantHandler, chains))
             {
-                Address = TransactionId
-                ,PublicKey = PublicKey
-                ,Country = Country
-                ,Region = Region
-                ,EntityName = EntityName
-            });
+                participantHandler.ProposePublisher(new Publisher()
+                {
+                    Address = TransactionId
+                    ,
+                    PublicKey = PublicKey
+                    ,
+                    Country = Country
+                    ,
+                    Region = Region
+                    ,
+                    EntityName = EntityName
+                });
 
-            return true;
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -12,14 +12,45 @@ public static partial class PublisherServer
   static readonly string __ServiceName = "PublisherServer";
 
   static readonly grpc::Marshaller<global::PingRequest> __Marshaller_PingRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::PingRequest.Parser.ParseFrom);
-  static readonly grpc::Marshaller<global::PingResult> __Marshaller_PingResult = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::PingResult.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::AckMessage> __Marshaller_AckMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::AckMessage.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::ChainMessage> __Marshaller_ChainMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::ChainMessage.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::ServerAddressMessage> __Marshaller_ServerAddressMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::ServerAddressMessage.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::DeltaRequest> __Marshaller_DeltaRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::DeltaRequest.Parser.ParseFrom);
 
-  static readonly grpc::Method<global::PingRequest, global::PingResult> __Method_Ping = new grpc::Method<global::PingRequest, global::PingResult>(
+  static readonly grpc::Method<global::PingRequest, global::AckMessage> __Method_Ping = new grpc::Method<global::PingRequest, global::AckMessage>(
       grpc::MethodType.Unary,
       __ServiceName,
       "Ping",
       __Marshaller_PingRequest,
-      __Marshaller_PingResult);
+      __Marshaller_AckMessage);
+
+  static readonly grpc::Method<global::ChainMessage, global::AckMessage> __Method_ReceiveChain = new grpc::Method<global::ChainMessage, global::AckMessage>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "ReceiveChain",
+      __Marshaller_ChainMessage,
+      __Marshaller_AckMessage);
+
+  static readonly grpc::Method<global::ServerAddressMessage, global::AckMessage> __Method_RegisterNode = new grpc::Method<global::ServerAddressMessage, global::AckMessage>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "RegisterNode",
+      __Marshaller_ServerAddressMessage,
+      __Marshaller_AckMessage);
+
+  static readonly grpc::Method<global::DeltaRequest, global::ChainMessage> __Method_RequestDeltaChain = new grpc::Method<global::DeltaRequest, global::ChainMessage>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "RequestDeltaChain",
+      __Marshaller_DeltaRequest,
+      __Marshaller_ChainMessage);
+
+  static readonly grpc::Method<global::ServerAddressMessage, global::ChainMessage> __Method_RequestFullChain = new grpc::Method<global::ServerAddressMessage, global::ChainMessage>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "RequestFullChain",
+      __Marshaller_ServerAddressMessage,
+      __Marshaller_ChainMessage);
 
   /// <summary>Service descriptor</summary>
   public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -31,7 +62,27 @@ public static partial class PublisherServer
   [grpc::BindServiceMethod(typeof(PublisherServer), "BindService")]
   public abstract partial class PublisherServerBase
   {
-    public virtual global::System.Threading.Tasks.Task<global::PingResult> Ping(global::PingRequest request, grpc::ServerCallContext context)
+    public virtual global::System.Threading.Tasks.Task<global::AckMessage> Ping(global::PingRequest request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::AckMessage> ReceiveChain(global::ChainMessage request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::AckMessage> RegisterNode(global::ServerAddressMessage request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::ChainMessage> RequestDeltaChain(global::DeltaRequest request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::ChainMessage> RequestFullChain(global::ServerAddressMessage request, grpc::ServerCallContext context)
     {
       throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
     }
@@ -61,21 +112,85 @@ public static partial class PublisherServer
     {
     }
 
-    public virtual global::PingResult Ping(global::PingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    public virtual global::AckMessage Ping(global::PingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
     {
       return Ping(request, new grpc::CallOptions(headers, deadline, cancellationToken));
     }
-    public virtual global::PingResult Ping(global::PingRequest request, grpc::CallOptions options)
+    public virtual global::AckMessage Ping(global::PingRequest request, grpc::CallOptions options)
     {
       return CallInvoker.BlockingUnaryCall(__Method_Ping, null, options, request);
     }
-    public virtual grpc::AsyncUnaryCall<global::PingResult> PingAsync(global::PingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> PingAsync(global::PingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
     {
       return PingAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
     }
-    public virtual grpc::AsyncUnaryCall<global::PingResult> PingAsync(global::PingRequest request, grpc::CallOptions options)
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> PingAsync(global::PingRequest request, grpc::CallOptions options)
     {
       return CallInvoker.AsyncUnaryCall(__Method_Ping, null, options, request);
+    }
+    public virtual global::AckMessage ReceiveChain(global::ChainMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return ReceiveChain(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::AckMessage ReceiveChain(global::ChainMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_ReceiveChain, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> ReceiveChainAsync(global::ChainMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return ReceiveChainAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> ReceiveChainAsync(global::ChainMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_ReceiveChain, null, options, request);
+    }
+    public virtual global::AckMessage RegisterNode(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RegisterNode(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::AckMessage RegisterNode(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_RegisterNode, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> RegisterNodeAsync(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RegisterNodeAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> RegisterNodeAsync(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_RegisterNode, null, options, request);
+    }
+    public virtual global::ChainMessage RequestDeltaChain(global::DeltaRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestDeltaChain(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::ChainMessage RequestDeltaChain(global::DeltaRequest request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_RequestDeltaChain, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::ChainMessage> RequestDeltaChainAsync(global::DeltaRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestDeltaChainAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::ChainMessage> RequestDeltaChainAsync(global::DeltaRequest request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_RequestDeltaChain, null, options, request);
+    }
+    public virtual global::ChainMessage RequestFullChain(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestFullChain(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::ChainMessage RequestFullChain(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_RequestFullChain, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::ChainMessage> RequestFullChainAsync(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestFullChainAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::ChainMessage> RequestFullChainAsync(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_RequestFullChain, null, options, request);
     }
     /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
     protected override PublisherServerClient NewInstance(ClientBaseConfiguration configuration)
@@ -89,7 +204,11 @@ public static partial class PublisherServer
   public static grpc::ServerServiceDefinition BindService(PublisherServerBase serviceImpl)
   {
     return grpc::ServerServiceDefinition.CreateBuilder()
-        .AddMethod(__Method_Ping, serviceImpl.Ping).Build();
+        .AddMethod(__Method_Ping, serviceImpl.Ping)
+        .AddMethod(__Method_ReceiveChain, serviceImpl.ReceiveChain)
+        .AddMethod(__Method_RegisterNode, serviceImpl.RegisterNode)
+        .AddMethod(__Method_RequestDeltaChain, serviceImpl.RequestDeltaChain)
+        .AddMethod(__Method_RequestFullChain, serviceImpl.RequestFullChain).Build();
   }
 
   /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -98,7 +217,11 @@ public static partial class PublisherServer
   /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
   public static void BindService(grpc::ServiceBinderBase serviceBinder, PublisherServerBase serviceImpl)
   {
-    serviceBinder.AddMethod(__Method_Ping, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::PingRequest, global::PingResult>(serviceImpl.Ping));
+    serviceBinder.AddMethod(__Method_Ping, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::PingRequest, global::AckMessage>(serviceImpl.Ping));
+    serviceBinder.AddMethod(__Method_ReceiveChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ChainMessage, global::AckMessage>(serviceImpl.ReceiveChain));
+    serviceBinder.AddMethod(__Method_RegisterNode, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::AckMessage>(serviceImpl.RegisterNode));
+    serviceBinder.AddMethod(__Method_RequestDeltaChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::DeltaRequest, global::ChainMessage>(serviceImpl.RequestDeltaChain));
+    serviceBinder.AddMethod(__Method_RequestFullChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::ChainMessage>(serviceImpl.RequestFullChain));
   }
 
 }

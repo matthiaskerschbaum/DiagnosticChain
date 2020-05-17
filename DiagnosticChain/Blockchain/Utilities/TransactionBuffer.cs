@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using Blockchain.Interfaces;
 
 namespace Blockchain.Utilities
@@ -42,6 +43,28 @@ namespace Blockchain.Utilities
         public bool HasBlocks()
         {
             return !unpublishedBlocks.IsEmpty;
+        }
+
+        public Chain Peek()
+        {
+            Chain ret = new Chain();
+            Block peekTransactions = new Block();
+
+            foreach (var b in unpublishedBlocks)
+            {
+                foreach (var t in b.TransactionList)
+                {
+                    peekTransactions.AddTransaction(t);
+                }
+            }
+
+            foreach (var t in openTransactions)
+            {
+                peekTransactions.AddTransaction(t);
+            }
+
+            ret.Add(peekTransactions);
+            return ret;
         }
 
         public void RecordTransaction(ITransaction transaction)

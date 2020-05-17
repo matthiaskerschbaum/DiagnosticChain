@@ -22,26 +22,32 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            throw new NotImplementedException();
+            return SenderAddress == TransactionId
+                && ValidateTransactionIntegrity(PublicKey)
+                && !participantHandler.HasPhysician(TransactionId);
         }
 
         public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            if (SenderAddress != TransactionId)
+            if (ValidateContextual(participantHandler, chains))
             {
-                return false;
+                participantHandler.ProposePhysician(new Physician()
+                {
+                    Address = TransactionId
+                    ,
+                    PublicKey = PublicKey
+                    ,
+                    Country = Country
+                    ,
+                    Region = Region
+                    ,
+                    Name = Name
+                });
+
+                return true;
             }
 
-            participantHandler.ProposePhysician(new Physician()
-            { 
-                Address = TransactionId
-                ,PublicKey = PublicKey
-                ,Country = Country
-                ,Region = Region
-                ,Name = Name
-            });
-
-            return true;
+            return false;
         }
     }
 }

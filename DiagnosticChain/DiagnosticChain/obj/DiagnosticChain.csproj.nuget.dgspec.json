@@ -175,7 +175,14 @@
         },
         "frameworks": {
           "netstandard2.0": {
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\DiagnosticChain\\DiagnosticChain\\Blockchain\\Blockchain.csproj": {
+                "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\Blockchain\\Blockchain.csproj"
+              },
+              "D:\\DiagnosticChain\\DiagnosticChain\\Shared\\Shared.csproj": {
+                "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\Shared\\Shared.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -252,6 +259,9 @@
             "projectReferences": {
               "D:\\DiagnosticChain\\DiagnosticChain\\Blockchain\\Blockchain.csproj": {
                 "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\Blockchain\\Blockchain.csproj"
+              },
+              "D:\\DiagnosticChain\\DiagnosticChain\\NetworkingFacilities\\NetworkingFacilities.csproj": {
+                "projectPath": "D:\\DiagnosticChain\\DiagnosticChain\\NetworkingFacilities\\NetworkingFacilities.csproj"
               }
             }
           }

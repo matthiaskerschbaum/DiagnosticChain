@@ -1,1 +1,2 @@
 master	publisher
+sub	publisher

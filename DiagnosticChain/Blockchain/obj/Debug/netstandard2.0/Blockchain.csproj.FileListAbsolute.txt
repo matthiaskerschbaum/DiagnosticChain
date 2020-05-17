@@ -1,11 +1,11 @@
 D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Blockchain.deps.json
 D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Blockchain.dll
+D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Blockchain.pdb
+D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Shared.pdb
 D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.csprojAssemblyReference.cache
 D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.AssemblyInfoInputs.cache
 D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.AssemblyInfo.cs
-D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Blockchain.pdb
+D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.csproj.CopyComplete
 D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.dll
 D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.pdb
-D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Shared.dll
-D:\DiagnosticChain\DiagnosticChain\Blockchain\bin\Debug\netstandard2.0\Shared.pdb
-D:\DiagnosticChain\DiagnosticChain\Blockchain\obj\Debug\netstandard2.0\Blockchain.csproj.CopyComplete

@@ -5,12 +5,35 @@ option java_package = "diagnosticchain.protos";
 option java_outer_classname = "PublisherProto";
 option objc_class_prefix = "PuP";
 
+
+
 service PublisherServer {
-	rpc Ping(PingRequest) returns (PingResult) {}
+	rpc Ping(PingRequest) returns (AckMessage) {}
+	rpc ReceiveChain(ChainMessage) returns (AckMessage) {}
+	rpc RegisterNode(ServerAddressMessage) returns (AckMessage) {}
+	rpc RequestDeltaChain(DeltaRequest) returns (ChainMessage) {}
+	rpc RequestFullChain(ServerAddressMessage) returns (ChainMessage) {}
+}
+
+message AckMessage {
+	enum Status {
+		OK = 0;
+		NOK = 1;
+	}
+	Status status = 1;
+}
+
+message ChainMessage {
+	string xml = 1;
+}
+
+message DeltaRequest {
+	int64 currentIndex = 1; 
 }
 
 message PingRequest {}
 
-message PingResult {
-	string result = 1;
+message ServerAddressMessage {
+	string ip = 1;
+	int32 port = 2;
 }

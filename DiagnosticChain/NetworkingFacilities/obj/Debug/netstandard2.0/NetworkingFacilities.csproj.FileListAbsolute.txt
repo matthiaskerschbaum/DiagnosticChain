@@ -1,8 +1,13 @@
-D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.deps.json
-D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.dll
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.csprojAssemblyReference.cache
 D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.AssemblyInfoInputs.cache
 D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.AssemblyInfo.cs
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.deps.json
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.dll
 D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\NetworkingFacilities.pdb
-D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.csprojAssemblyReference.cache
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\Blockchain.dll
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\Shared.dll
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\Blockchain.pdb
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\bin\Debug\netstandard2.0\Shared.pdb
+D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.csproj.CopyComplete
 D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.dll
 D:\DiagnosticChain\DiagnosticChain\NetworkingFacilities\obj\Debug\netstandard2.0\NetworkingFacilities.pdb

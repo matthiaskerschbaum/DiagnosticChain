@@ -61,6 +61,13 @@ namespace Blockchain
         //TODO Rückgabewert auf Chain ändern, und alle Blocks zurück geben, die gelöscht werden
         public bool Add(Chain chain)
         {
+            //If chain is currently empty, set Blockhead to inserted chain's Blockhead and return true
+            if (Blockhead == null)
+            {
+                Blockhead = chain.Blockhead;
+                return true;
+            }
+
             //Get first block in chain
             var firstBlock = chain.Blockhead;
             while (firstBlock.PreviousBlock != null) firstBlock = firstBlock.PreviousBlock;

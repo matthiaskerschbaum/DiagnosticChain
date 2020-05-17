@@ -20,25 +20,33 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            throw new NotImplementedException();
+            var ret = participantHandler.HasSender(SenderAddress)
+                && ValidateTransactionIntegrity(participantHandler.GetSenderKey(SenderAddress));
+
+            ret &= !participantHandler.HasPatient(TransactionId);
+
+            return ret;
         }
 
         public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            if (participantHandler.HasPatient(TransactionId))
+            if (ValidateContextual(participantHandler, chains))
             {
-                return false;
+                participantHandler.AddPatient(new Patient()
+                {
+                    Address = TransactionId
+                    ,
+                    Country = Country
+                    ,
+                    Region = Region
+                    ,
+                    Birthyear = Birthyear
+                });
+
+                return true;
             }
 
-            participantHandler.AddPatient(new Patient()
-            {
-                Address = TransactionId
-                ,Country = Country
-                ,Region = Region
-                ,Birthyear = Birthyear
-            });
-
-            return true;
+            return false;
         }
     }
 }

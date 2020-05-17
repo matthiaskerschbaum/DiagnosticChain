@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blockchain\Blockchain.csproj" />
+    <ProjectReference Include="..\NetworkingFacilities\NetworkingFacilities.csproj" />
   </ItemGroup>
 
 </Project>

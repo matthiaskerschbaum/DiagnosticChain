@@ -69,11 +69,6 @@ namespace Blockchain
         {
             var ret = true;
 
-            if (PreviousBlock != null)
-            {
-                ret &= PreviousBlock.ProcessContracts(participantHandler, chains);
-            }
-
             foreach (var t in TransactionList)
             {
                 ret &= t.ProcessContract(participantHandler, chains);

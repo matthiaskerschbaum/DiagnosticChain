@@ -25,12 +25,10 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            throw new NotImplementedException();
-        }
-
-        public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
-        {
             var valid = false;
+
+            valid &= participantHandler.HasSender(SenderAddress)
+                && ValidateTransactionIntegrity(participantHandler.GetSenderKey(SenderAddress));
 
             foreach (var c in chains)
             {
@@ -40,6 +38,9 @@ namespace Blockchain.Transactions
             return valid;
         }
 
-
+        public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
+        {
+            return ValidateContextual(participantHandler, chains);
+        }
     }
 }

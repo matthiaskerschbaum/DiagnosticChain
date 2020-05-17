@@ -18,11 +18,20 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            throw new NotImplementedException();
+            return 
+                (participantHandler.IsEmpty() && participantHandler.IsVotablePublisher(TransactionAddress))
+                || ((participantHandler.IsVotablePublisher(TransactionAddress) || participantHandler.IsVotablePhysician(TransactionAddress))
+                    && participantHandler.HasPublisher(SenderAddress)
+                    && ValidateTransactionIntegrity(participantHandler.GetSenderKey(SenderAddress)));
         }
 
         public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
+            if (!ValidateContextual(participantHandler, chains))
+            {
+                return false;
+            }
+
             if (participantHandler.IsEmpty() && participantHandler.IsVotablePublisher(TransactionAddress)) //For the first publisher in the chain
             {
                 if (Vote)
@@ -33,9 +42,7 @@ namespace Blockchain.Transactions
                 {
                     participantHandler.CastVoteAgainstPublisher(TransactionAddress, SenderAddress);
                 }
-            }
-
-            if (participantHandler.IsVotablePublisher(TransactionAddress) && participantHandler.HasPublisher(SenderAddress))
+            } else if (participantHandler.IsVotablePublisher(TransactionAddress) && participantHandler.HasPublisher(SenderAddress))
             {
                 if (Vote)
                 {

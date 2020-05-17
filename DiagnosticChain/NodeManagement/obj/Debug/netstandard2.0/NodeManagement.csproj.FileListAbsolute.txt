@@ -2,12 +2,14 @@ D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\NodeM
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\NodeManagement.dll
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\NodeManagement.pdb
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Blockchain.dll
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.dll
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Blockchain.pdb
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.pdb
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.csprojAssemblyReference.cache
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.AssemblyInfoInputs.cache
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.AssemblyInfo.cs
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.csproj.CopyComplete
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.dll
 D:\DiagnosticChain\DiagnosticChain\NodeManagement\obj\Debug\netstandard2.0\NodeManagement.pdb
-D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.dll
-D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\Shared.pdb
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\NetworkingFacilities.dll
+D:\DiagnosticChain\DiagnosticChain\NodeManagement\bin\Debug\netstandard2.0\NetworkingFacilities.pdb

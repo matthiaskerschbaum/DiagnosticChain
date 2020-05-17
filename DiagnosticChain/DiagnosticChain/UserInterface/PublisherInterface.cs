@@ -21,6 +21,7 @@ namespace DiagnosticChain.UserInterface
             userCommands = new Dictionary<string, Action>()
             {
                 { "list blocks", ListBlocks }
+                , { "list nodes", ListNodes }
                 , { "list transactions", ListTransactions }
                 , { "list patients", ListPatients }
                 , { "list physicians proposed", ListPhysiciansProposed }
@@ -28,48 +29,65 @@ namespace DiagnosticChain.UserInterface
                 , { "list publishers proposed", ListPublishersProposed }
                 , { "list publishers", ListPublishers }
                 , { "load chain", LoadChain }
+                , { "ping node", PingNode }
                 , { "save chain", SaveChain }
-                , { "test ping", TestPing }
+                , { "server reset address", ResetServerAddress }
+                , { "server stats address", DisplayServerAddress }
                 , { "test transactions", GenerateTestTransactions }
-                //, { "validate chain", ValidateChain }
-                //, { "vote publisher", VotePublisher }
+                , { "validate chain", ValidateChain }
+                , { "vote publisher", VotePublisher }
             };
+        }
+
+        private void DisplayServerAddress()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Server listening under: " + controller.GetServerAddress());
+            CLI.DisplayLineDelimiter();
         }
 
         public void Interact(Action onCompletion)
         {
-            CLI.DisplayLine("Welcome to the publishing interface!");
-            CLI.DisplayLineDelimiter();
-
-            if (!controller.HasSavedState()) SetupNewPublisher();
-            controller.Start();
-
-            CLI.DisplayLine("PublisherHandler ready. Enter " + UIConstants.abortionCode + " to quit.");
-            CLI.DisplayLineDelimiter();
-
-            var userInput = CLI.PromptUser(promptNextCommand);
-
-            while (userInput != UIConstants.abortionCode)
+            try
             {
-                if (userCommands.ContainsKey(userInput))
+                CLI.DisplayLine("Welcome to the publishing interface!");
+                CLI.DisplayLineDelimiter();
+
+                if (!controller.HasSavedState()) StartAsNewPublisher();
+                else controller.Start();
+
+                if (!controller.HasChain()) RegisterAtNode();
+
+                CLI.DisplayLine("PublisherHandler ready. Enter " + UIConstants.abortionCode + " to quit.");
+                CLI.DisplayLineDelimiter();
+
+                var userInput = CLI.PromptUser(promptNextCommand);
+
+                while (userInput != UIConstants.abortionCode)
                 {
-                    userCommands[userInput]();
-                } else
-                {
-                    CLI.DisplayLine("Command not found. The following options are available:\n");
-                    foreach (string key in userCommands.Keys)
+                    if (userCommands.ContainsKey(userInput))
                     {
-                        CLI.DisplayLine(key);
+                        userCommands[userInput]();
+                    }
+                    else
+                    {
+                        CLI.DisplayLine("Command not found. The following options are available:\n");
+                        foreach (string key in userCommands.Keys)
+                        {
+                            CLI.DisplayLine(key);
+                        }
+
+                        CLI.DisplayLineDelimiter();
                     }
 
-                    CLI.DisplayLineDelimiter();
+                    userInput = CLI.PromptUser(promptNextCommand);
                 }
-
-                userInput = CLI.PromptUser(promptNextCommand);
             }
-
-            controller.ShutDown();
-            onCompletion();
+            finally
+            {
+                controller.ShutDown();
+                onCompletion();
+            }
         }
 
         private void GenerateTestTransactions()
@@ -96,6 +114,21 @@ namespace DiagnosticChain.UserInterface
             foreach (var s in blockStatistics)
             {
                 CLI.DisplayLine(s);
+            }
+
+            CLI.DisplayLineDelimiter();
+        }
+
+        private void ListNodes()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Listing known nodes");
+            CLI.DisplayLineDelimiter();
+            var knownNodes = controller.GetKnownNodes();
+
+            foreach (var n in knownNodes)
+            {
+                CLI.DisplayLine(n.FullAddress);
             }
 
             CLI.DisplayLineDelimiter();
@@ -225,9 +258,94 @@ namespace DiagnosticChain.UserInterface
         {
             CLI.DisplayLineDelimiter();
             CLI.DisplayLine("Loading chain...");
-            controller.LoadChain();
-            CLI.DisplayLine("Chain loaded");
+            var success = controller.LoadChain();
+
+            if (success)
+            {
+                CLI.DisplayLine("Chain loaded successfully");
+            } else
+            {
+                CLI.DisplayLine("Chain file corrupted. Please use another blockchain file, or load chain from a known node.");
+            }
+
+            CLI.DisplayLine("Load finished");
             CLI.DisplayLineDelimiter();
+        }
+
+        private void PingNode()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Pinging a known node");
+            CLI.DisplayLineDelimiter();
+
+            var ip = CLI.PromptUser("Please provide the IP address of the server to ping:");
+            var port = CLI.PromptUser("Please provide the port to ping on destination server:");
+
+            var pingAddress = new ServerAddress
+            {
+                Ip = ip
+                ,
+                Port = Int32.Parse(port)
+            };
+
+            CLI.DisplayLine("Pinging " + pingAddress.FullAddress);
+            var response = controller.PingNode(pingAddress);
+            CLI.DisplayLine("Ping response: " + response);
+        }
+
+        public void PrepareForUser(string username)
+        {
+            controller = new PublisherController(username);
+        }
+
+        private void RegisterAtNode()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Connection to an existing node required");
+            CLI.DisplayLineDelimiter();
+
+            ServerAddress connectionAddress;
+            do
+            {
+                var ip = CLI.PromptUser("Please provide the IP address of an existing node to connect to:");
+                var port = CLI.PromptUser("Please provide the port to connect to at the destination:");
+
+                connectionAddress = new ServerAddress()
+                {
+                    Ip = ip
+                    ,
+                    Port = Int32.Parse(port)
+                };
+
+                CLI.DisplayLine("Attempting connection to " + connectionAddress.FullAddress + "...");
+            } while (!controller.RegisterAt(connectionAddress));
+
+            CLI.DisplayLine("Connection succeeded");
+            CLI.DisplayLineDelimiter();
+        }
+
+        private void ResetServerAddress()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Resetting the server address");
+            CLI.DisplayLineDelimiter();
+            
+            CLI.DisplayLine("Server is currently listening under: " + controller.GetServerAddress());
+            var userChoice = CLI.PromptUser("To continue using this address, enter " + UIConstants.abortionCode + " to quit. To change the address, enter C to continue.");
+            if (userChoice == "C")
+            {
+                CLI.DisplayLineDelimiter();
+                var newIp = CLI.PromptUser("Please provide the server's new IP address:");
+                var newPort = CLI.PromptUser("Please provide the new port to listen on:");
+
+                if (controller.ChangeServerAddress(newIp, Int32.Parse(newPort)))
+                {
+                    CLI.DisplayLine("Server address reset successfully");
+                } else
+                {
+                    CLI.DisplayLine("Error resetting the server address to " + newIp + ":" + newPort + ". The address remains unchanged.");
+                }
+            }
         }
 
         private void SaveChain()
@@ -235,26 +353,84 @@ namespace DiagnosticChain.UserInterface
             controller.SaveChain();
         }
 
-        private void TestPing()
+        private void StartAsNewPublisher()
         {
-            var response = controller.PingNode("127.0.0.1:123456");
-            CLI.DisplayLine(response);
-        }
-
-        private void SetupNewPublisher()
-        {
-            CLI.DisplayLine("You are not a registered publisher yet. Please provide us with the following data:");
+            CLI.DisplayLine("You are not a registered publisher yet. Please provide the following data:");
             var country = CLI.PromptUser("Your country:");
             var region = CLI.PromptUser("Your region:");
             var entityName = CLI.PromptUser("Name of your organisation:");
 
-            controller.SetupNewPublisher(country, region, entityName);
+            CLI.DisplayLine("As a publisher, you need to host a server to handle incoming blockchain requests. In order to set up this server, please provide the following data:");
+            var serverIp = CLI.PromptUser("IP address of the host server:");
+            var serverPort = Int32.Parse(CLI.PromptUser("Port on which to host the server:"));
+            ServerAddress selfAddress = new ServerAddress()
+            {
+                Ip = serverIp
+                ,
+                Port = serverPort
+            };
+
+            ServerAddress initializerAddress = null;
+            var connectionSelection = CLI.PromptUser("Please select further: C to connect to an existing blockchain network, or N to start a new blockchain:");
+            if (connectionSelection == "C")
+            {
+                var connectorIp = CLI.PromptUser("Please provide the IP address of an existing node to connect to:");
+                var connectorPort = CLI.PromptUser("Please provide the port to connect to at the destination:");
+
+                initializerAddress = new ServerAddress()
+                {
+                    Ip = connectorIp
+                    ,
+                    Port = Int32.Parse(connectorPort)
+                };
+            }
+
+            controller.StartAsNewPublisher(country, region, entityName, selfAddress, initializerAddress);
             CLI.DisplayLine("Publisher initialized");
         }
 
-        public void PrepareForUser(string username)
+        private void ValidateChain()
         {
-            controller = new PublisherController(username);
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Validating chain");
+            CLI.DisplayLineDelimiter();
+
+            var validity = controller.ValidateChain();
+            var display = "Current chain status: " + (validity ? "valid" : "not valid");
+            CLI.DisplayLine(display);
+
+            CLI.DisplayLineDelimiter();
+        }
+
+        private void VotePublisher()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Vote for proposed publishers");
+            CLI.DisplayLineDelimiter();
+            var proposedPublishers = controller.GetProposedPublishers().ToArray();
+
+            CLI.DisplayLine("The following publishers are available:\n");
+            for (int i = 0; i < proposedPublishers.Length; i++)
+            {
+                CLI.DisplayLine(i + "\t" + proposedPublishers[i].EntityName + ", " + proposedPublishers[i].Country + ", " + proposedPublishers[i].Region);
+            }
+            CLI.DisplayLineDelimiter();
+
+            var input = CLI.PromptUser("Please enter the index of the publisher you are voting for, or enter Q to quit: ");
+
+            if (input == "Q") return;
+            int index;
+            if (int.TryParse(input, out index) && index < proposedPublishers.Length)
+            {
+                var vote = CLI.PromptUser("Please enter y for confirmed, or n for dismiss");
+                controller.VoteForPublisher(proposedPublishers[index].Address, vote == "y");
+            }
+            else
+            {
+                CLI.DisplayLine("Publisher not found");
+            }
+
+            CLI.DisplayLineDelimiter();
         }
     }
 }

@@ -107,8 +107,10 @@
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
+          "Blockchain": "1.0.0",
           "Google.Protobuf": "3.11.4",
-          "Grpc": "2.28.1"
+          "Grpc": "2.28.1",
+          "Shared": "1.0.0"
         },
         "compile": {
           "bin/placeholder/NetworkingFacilities.dll": {}
@@ -121,7 +123,8 @@
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
-          "Blockchain": "1.0.0"
+          "Blockchain": "1.0.0",
+          "NetworkingFacilities": "1.0.0"
         },
         "compile": {
           "bin/placeholder/NodeManagement.dll": {}

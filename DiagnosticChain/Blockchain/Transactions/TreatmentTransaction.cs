@@ -18,12 +18,17 @@ namespace Blockchain.Transactions
 
         public override bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            throw new NotImplementedException();
+            var ret = participantHandler.HasSender(SenderAddress)
+                && ValidateTransactionIntegrity(participantHandler.GetSenderKey(SenderAddress));
+
+            ret &= participantHandler.HasSender(PhysicianAddress) && participantHandler.HasPatient(PatientAddress);
+
+            return ret;
         }
 
         public override bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains)
         {
-            return participantHandler.HasSender(PhysicianAddress) && participantHandler.HasPatient(PatientAddress);
+            return ValidateContextual(participantHandler, chains);
         }
     }
 }

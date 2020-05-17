@@ -109,8 +109,10 @@
       },
       "NetworkingFacilities/1.0.0": {
         "dependencies": {
+          "Blockchain": "1.0.0",
           "Google.Protobuf": "3.11.4",
-          "Grpc": "2.28.1"
+          "Grpc": "2.28.1",
+          "Shared": "1.0.0"
         },
         "runtime": {
           "NetworkingFacilities.dll": {}
@@ -118,7 +120,8 @@
       },
       "NodeManagement/1.0.0": {
         "dependencies": {
-          "Blockchain": "1.0.0"
+          "Blockchain": "1.0.0",
+          "NetworkingFacilities": "1.0.0"
         },
         "runtime": {
           "NodeManagement.dll": {}
