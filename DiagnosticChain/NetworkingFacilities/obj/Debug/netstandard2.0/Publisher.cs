@@ -24,25 +24,41 @@ public static partial class PublisherReflection {
         string.Concat(
           "ChZQcm90b3MvcHVibGlzaGVyLnByb3RvIksKCkFja01lc3NhZ2USIgoGc3Rh",
           "dHVzGAEgASgOMhIuQWNrTWVzc2FnZS5TdGF0dXMiGQoGU3RhdHVzEgYKAk9L",
-          "EAASBwoDTk9LEAEiGwoMQ2hhaW5NZXNzYWdlEgsKA3htbBgBIAEoCSIkCgxE",
-          "ZWx0YVJlcXVlc3QSFAoMY3VycmVudEluZGV4GAEgASgDIg0KC1BpbmdSZXF1",
-          "ZXN0IjAKFFNlcnZlckFkZHJlc3NNZXNzYWdlEgoKAmlwGAEgASgJEgwKBHBv",
-          "cnQYAiABKAUyiwIKD1B1Ymxpc2hlclNlcnZlchIjCgRQaW5nEgwuUGluZ1Jl",
-          "cXVlc3QaCy5BY2tNZXNzYWdlIgASLAoMUmVjZWl2ZUNoYWluEg0uQ2hhaW5N",
-          "ZXNzYWdlGgsuQWNrTWVzc2FnZSIAEjQKDFJlZ2lzdGVyTm9kZRIVLlNlcnZl",
-          "ckFkZHJlc3NNZXNzYWdlGgsuQWNrTWVzc2FnZSIAEjMKEVJlcXVlc3REZWx0",
-          "YUNoYWluEg0uRGVsdGFSZXF1ZXN0Gg0uQ2hhaW5NZXNzYWdlIgASOgoQUmVx",
-          "dWVzdEZ1bGxDaGFpbhIVLlNlcnZlckFkZHJlc3NNZXNzYWdlGg0uQ2hhaW5N",
-          "ZXNzYWdlIgBCMAoWZGlhZ25vc3RpY2NoYWluLnByb3Rvc0IOUHVibGlzaGVy",
-          "UHJvdG9QAaICA1B1UGIGcHJvdG8z"));
+          "EAASBwoDTk9LEAEiSQoMQ2hhaW5NZXNzYWdlEiwKDVNlbmRlckFkZHJlc3MY",
+          "ASABKAsyFS5TZXJ2ZXJBZGRyZXNzTWVzc2FnZRILCgN4bWwYAiABKAkiUgoM",
+          "RGVsdGFSZXF1ZXN0EiwKDVNlbmRlckFkZHJlc3MYASABKAsyFS5TZXJ2ZXJB",
+          "ZGRyZXNzTWVzc2FnZRIUCgxjdXJyZW50SW5kZXgYAiABKAMiHwoQUGh5c2lj",
+          "aWFuTWVzc2FnZRILCgN4bWwYASABKAkiQAoUUGh5c2ljaWFuTWVzc2FnZUxp",
+          "c3QSKAoNcGh5c2ljaWFuTGlzdBgBIAMoCzIRLlBoeXNpY2lhbk1lc3NhZ2Ui",
+          "DQoLUGluZ1JlcXVlc3QiMAoUU2VydmVyQWRkcmVzc01lc3NhZ2USCgoCaXAY",
+          "ASABKAkSDAoEcG9ydBgCIAEoBSJGChhTZXJ2ZXJBZGRyZXNzTWVzc2FnZUxp",
+          "c3QSKgoLYWRkcmVzc0xpc3QYASADKAsyFS5TZXJ2ZXJBZGRyZXNzTWVzc2Fn",
+          "ZSJPChJUcmFuc2FjdGlvbk1lc3NhZ2USLAoNU2VuZGVyQWRkcmVzcxgBIAEo",
+          "CzIVLlNlcnZlckFkZHJlc3NNZXNzYWdlEgsKA3htbBgCIAEoCTLVAwoPUHVi",
+          "bGlzaGVyU2VydmVyEiMKBFBpbmcSDC5QaW5nUmVxdWVzdBoLLkFja01lc3Nh",
+          "Z2UiABIsCgxSZWNlaXZlQ2hhaW4SDS5DaGFpbk1lc3NhZ2UaCy5BY2tNZXNz",
+          "YWdlIgASOAoSUmVjZWl2ZVRyYW5zYWN0aW9uEhMuVHJhbnNhY3Rpb25NZXNz",
+          "YWdlGgsuQWNrTWVzc2FnZSIAEjQKDFJlZ2lzdGVyTm9kZRIVLlNlcnZlckFk",
+          "ZHJlc3NNZXNzYWdlGgsuQWNrTWVzc2FnZSIAEjMKEVJlcXVlc3REZWx0YUNo",
+          "YWluEg0uRGVsdGFSZXF1ZXN0Gg0uQ2hhaW5NZXNzYWdlIgASOgoQUmVxdWVz",
+          "dEZ1bGxDaGFpbhIVLlNlcnZlckFkZHJlc3NNZXNzYWdlGg0uQ2hhaW5NZXNz",
+          "YWdlIgASQgoMUmVxdWVzdE5vZGVzEhUuU2VydmVyQWRkcmVzc01lc3NhZ2Ua",
+          "GS5TZXJ2ZXJBZGRyZXNzTWVzc2FnZUxpc3QiABJKChhSZXF1ZXN0UGVuZGlu",
+          "Z1BoeXNpY2lhbnMSFS5TZXJ2ZXJBZGRyZXNzTWVzc2FnZRoVLlBoeXNpY2lh",
+          "bk1lc3NhZ2VMaXN0IgBCMAoWZGlhZ25vc3RpY2NoYWluLnByb3Rvc0IOUHVi",
+          "bGlzaGVyUHJvdG9QAaICA1B1UGIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::AckMessage), global::AckMessage.Parser, new[]{ "Status" }, null, new[]{ typeof(global::AckMessage.Types.Status) }, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ChainMessage), global::ChainMessage.Parser, new[]{ "Xml" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::DeltaRequest), global::DeltaRequest.Parser, new[]{ "CurrentIndex" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ChainMessage), global::ChainMessage.Parser, new[]{ "SenderAddress", "Xml" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::DeltaRequest), global::DeltaRequest.Parser, new[]{ "SenderAddress", "CurrentIndex" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PhysicianMessage), global::PhysicianMessage.Parser, new[]{ "Xml" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PhysicianMessageList), global::PhysicianMessageList.Parser, new[]{ "PhysicianList" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PingRequest), global::PingRequest.Parser, null, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ServerAddressMessage), global::ServerAddressMessage.Parser, new[]{ "Ip", "Port" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::ServerAddressMessage), global::ServerAddressMessage.Parser, new[]{ "Ip", "Port" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ServerAddressMessageList), global::ServerAddressMessageList.Parser, new[]{ "AddressList" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::TransactionMessage), global::TransactionMessage.Parser, new[]{ "SenderAddress", "Xml" }, null, null, null, null)
         }));
   }
   #endregion
@@ -215,6 +231,7 @@ public sealed partial class ChainMessage : pb::IMessage<ChainMessage> {
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public ChainMessage(ChainMessage other) : this() {
+    senderAddress_ = other.senderAddress_ != null ? other.senderAddress_.Clone() : null;
     xml_ = other.xml_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -224,8 +241,19 @@ public sealed partial class ChainMessage : pb::IMessage<ChainMessage> {
     return new ChainMessage(this);
   }
 
+  /// <summary>Field number for the "SenderAddress" field.</summary>
+  public const int SenderAddressFieldNumber = 1;
+  private global::ServerAddressMessage senderAddress_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public global::ServerAddressMessage SenderAddress {
+    get { return senderAddress_; }
+    set {
+      senderAddress_ = value;
+    }
+  }
+
   /// <summary>Field number for the "xml" field.</summary>
-  public const int XmlFieldNumber = 1;
+  public const int XmlFieldNumber = 2;
   private string xml_ = "";
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public string Xml {
@@ -242,6 +270,320 @@ public sealed partial class ChainMessage : pb::IMessage<ChainMessage> {
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public bool Equals(ChainMessage other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(SenderAddress, other.SenderAddress)) return false;
+    if (Xml != other.Xml) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (senderAddress_ != null) hash ^= SenderAddress.GetHashCode();
+    if (Xml.Length != 0) hash ^= Xml.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+    if (senderAddress_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(SenderAddress);
+    }
+    if (Xml.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Xml);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    if (senderAddress_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(SenderAddress);
+    }
+    if (Xml.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Xml);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(ChainMessage other) {
+    if (other == null) {
+      return;
+    }
+    if (other.senderAddress_ != null) {
+      if (senderAddress_ == null) {
+        SenderAddress = new global::ServerAddressMessage();
+      }
+      SenderAddress.MergeFrom(other.SenderAddress);
+    }
+    if (other.Xml.Length != 0) {
+      Xml = other.Xml;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (senderAddress_ == null) {
+            SenderAddress = new global::ServerAddressMessage();
+          }
+          input.ReadMessage(SenderAddress);
+          break;
+        }
+        case 18: {
+          Xml = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+
+}
+
+public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
+  private static readonly pb::MessageParser<DeltaRequest> _parser = new pb::MessageParser<DeltaRequest>(() => new DeltaRequest());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<DeltaRequest> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PublisherReflection.Descriptor.MessageTypes[2]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public DeltaRequest() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public DeltaRequest(DeltaRequest other) : this() {
+    senderAddress_ = other.senderAddress_ != null ? other.senderAddress_.Clone() : null;
+    currentIndex_ = other.currentIndex_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public DeltaRequest Clone() {
+    return new DeltaRequest(this);
+  }
+
+  /// <summary>Field number for the "SenderAddress" field.</summary>
+  public const int SenderAddressFieldNumber = 1;
+  private global::ServerAddressMessage senderAddress_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public global::ServerAddressMessage SenderAddress {
+    get { return senderAddress_; }
+    set {
+      senderAddress_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "currentIndex" field.</summary>
+  public const int CurrentIndexFieldNumber = 2;
+  private long currentIndex_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public long CurrentIndex {
+    get { return currentIndex_; }
+    set {
+      currentIndex_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as DeltaRequest);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(DeltaRequest other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(SenderAddress, other.SenderAddress)) return false;
+    if (CurrentIndex != other.CurrentIndex) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (senderAddress_ != null) hash ^= SenderAddress.GetHashCode();
+    if (CurrentIndex != 0L) hash ^= CurrentIndex.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+    if (senderAddress_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(SenderAddress);
+    }
+    if (CurrentIndex != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(CurrentIndex);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    if (senderAddress_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(SenderAddress);
+    }
+    if (CurrentIndex != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(CurrentIndex);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(DeltaRequest other) {
+    if (other == null) {
+      return;
+    }
+    if (other.senderAddress_ != null) {
+      if (senderAddress_ == null) {
+        SenderAddress = new global::ServerAddressMessage();
+      }
+      SenderAddress.MergeFrom(other.SenderAddress);
+    }
+    if (other.CurrentIndex != 0L) {
+      CurrentIndex = other.CurrentIndex;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (senderAddress_ == null) {
+            SenderAddress = new global::ServerAddressMessage();
+          }
+          input.ReadMessage(SenderAddress);
+          break;
+        }
+        case 16: {
+          CurrentIndex = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  }
+
+}
+
+public sealed partial class PhysicianMessage : pb::IMessage<PhysicianMessage> {
+  private static readonly pb::MessageParser<PhysicianMessage> _parser = new pb::MessageParser<PhysicianMessage>(() => new PhysicianMessage());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<PhysicianMessage> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PublisherReflection.Descriptor.MessageTypes[3]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PhysicianMessage() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PhysicianMessage(PhysicianMessage other) : this() {
+    xml_ = other.xml_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PhysicianMessage Clone() {
+    return new PhysicianMessage(this);
+  }
+
+  /// <summary>Field number for the "xml" field.</summary>
+  public const int XmlFieldNumber = 1;
+  private string xml_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public string Xml {
+    get { return xml_; }
+    set {
+      xml_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as PhysicianMessage);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(PhysicianMessage other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -291,7 +633,7 @@ public sealed partial class ChainMessage : pb::IMessage<ChainMessage> {
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(ChainMessage other) {
+  public void MergeFrom(PhysicianMessage other) {
     if (other == null) {
       return;
     }
@@ -319,15 +661,15 @@ public sealed partial class ChainMessage : pb::IMessage<ChainMessage> {
 
 }
 
-public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
-  private static readonly pb::MessageParser<DeltaRequest> _parser = new pb::MessageParser<DeltaRequest>(() => new DeltaRequest());
+public sealed partial class PhysicianMessageList : pb::IMessage<PhysicianMessageList> {
+  private static readonly pb::MessageParser<PhysicianMessageList> _parser = new pb::MessageParser<PhysicianMessageList>(() => new PhysicianMessageList());
   private pb::UnknownFieldSet _unknownFields;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static pb::MessageParser<DeltaRequest> Parser { get { return _parser; } }
+  public static pb::MessageParser<PhysicianMessageList> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::PublisherReflection.Descriptor.MessageTypes[2]; }
+    get { return global::PublisherReflection.Descriptor.MessageTypes[4]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -336,55 +678,54 @@ public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public DeltaRequest() {
+  public PhysicianMessageList() {
     OnConstruction();
   }
 
   partial void OnConstruction();
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public DeltaRequest(DeltaRequest other) : this() {
-    currentIndex_ = other.currentIndex_;
+  public PhysicianMessageList(PhysicianMessageList other) : this() {
+    physicianList_ = other.physicianList_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public DeltaRequest Clone() {
-    return new DeltaRequest(this);
+  public PhysicianMessageList Clone() {
+    return new PhysicianMessageList(this);
   }
 
-  /// <summary>Field number for the "currentIndex" field.</summary>
-  public const int CurrentIndexFieldNumber = 1;
-  private long currentIndex_;
+  /// <summary>Field number for the "physicianList" field.</summary>
+  public const int PhysicianListFieldNumber = 1;
+  private static readonly pb::FieldCodec<global::PhysicianMessage> _repeated_physicianList_codec
+      = pb::FieldCodec.ForMessage(10, global::PhysicianMessage.Parser);
+  private readonly pbc::RepeatedField<global::PhysicianMessage> physicianList_ = new pbc::RepeatedField<global::PhysicianMessage>();
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public long CurrentIndex {
-    get { return currentIndex_; }
-    set {
-      currentIndex_ = value;
-    }
+  public pbc::RepeatedField<global::PhysicianMessage> PhysicianList {
+    get { return physicianList_; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override bool Equals(object other) {
-    return Equals(other as DeltaRequest);
+    return Equals(other as PhysicianMessageList);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public bool Equals(DeltaRequest other) {
+  public bool Equals(PhysicianMessageList other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (CurrentIndex != other.CurrentIndex) return false;
+    if(!physicianList_.Equals(other.physicianList_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override int GetHashCode() {
     int hash = 1;
-    if (CurrentIndex != 0L) hash ^= CurrentIndex.GetHashCode();
+    hash ^= physicianList_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -398,10 +739,7 @@ public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public void WriteTo(pb::CodedOutputStream output) {
-    if (CurrentIndex != 0L) {
-      output.WriteRawTag(8);
-      output.WriteInt64(CurrentIndex);
-    }
+    physicianList_.WriteTo(output, _repeated_physicianList_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -410,9 +748,7 @@ public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public int CalculateSize() {
     int size = 0;
-    if (CurrentIndex != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(CurrentIndex);
-    }
+    size += physicianList_.CalculateSize(_repeated_physicianList_codec);
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -420,13 +756,11 @@ public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(DeltaRequest other) {
+  public void MergeFrom(PhysicianMessageList other) {
     if (other == null) {
       return;
     }
-    if (other.CurrentIndex != 0L) {
-      CurrentIndex = other.CurrentIndex;
-    }
+    physicianList_.Add(other.physicianList_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -438,8 +772,8 @@ public sealed partial class DeltaRequest : pb::IMessage<DeltaRequest> {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 8: {
-          CurrentIndex = input.ReadInt64();
+        case 10: {
+          physicianList_.AddEntriesFrom(input, _repeated_physicianList_codec);
           break;
         }
       }
@@ -456,7 +790,7 @@ public sealed partial class PingRequest : pb::IMessage<PingRequest> {
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::PublisherReflection.Descriptor.MessageTypes[3]; }
+    get { return global::PublisherReflection.Descriptor.MessageTypes[5]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -557,7 +891,7 @@ public sealed partial class ServerAddressMessage : pb::IMessage<ServerAddressMes
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::PublisherReflection.Descriptor.MessageTypes[4]; }
+    get { return global::PublisherReflection.Descriptor.MessageTypes[6]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -698,6 +1032,290 @@ public sealed partial class ServerAddressMessage : pb::IMessage<ServerAddressMes
         }
         case 16: {
           Port = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+
+}
+
+public sealed partial class ServerAddressMessageList : pb::IMessage<ServerAddressMessageList> {
+  private static readonly pb::MessageParser<ServerAddressMessageList> _parser = new pb::MessageParser<ServerAddressMessageList>(() => new ServerAddressMessageList());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<ServerAddressMessageList> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PublisherReflection.Descriptor.MessageTypes[7]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ServerAddressMessageList() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ServerAddressMessageList(ServerAddressMessageList other) : this() {
+    addressList_ = other.addressList_.Clone();
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ServerAddressMessageList Clone() {
+    return new ServerAddressMessageList(this);
+  }
+
+  /// <summary>Field number for the "addressList" field.</summary>
+  public const int AddressListFieldNumber = 1;
+  private static readonly pb::FieldCodec<global::ServerAddressMessage> _repeated_addressList_codec
+      = pb::FieldCodec.ForMessage(10, global::ServerAddressMessage.Parser);
+  private readonly pbc::RepeatedField<global::ServerAddressMessage> addressList_ = new pbc::RepeatedField<global::ServerAddressMessage>();
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public pbc::RepeatedField<global::ServerAddressMessage> AddressList {
+    get { return addressList_; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as ServerAddressMessageList);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(ServerAddressMessageList other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if(!addressList_.Equals(other.addressList_)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    hash ^= addressList_.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+    addressList_.WriteTo(output, _repeated_addressList_codec);
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    size += addressList_.CalculateSize(_repeated_addressList_codec);
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(ServerAddressMessageList other) {
+    if (other == null) {
+      return;
+    }
+    addressList_.Add(other.addressList_);
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          addressList_.AddEntriesFrom(input, _repeated_addressList_codec);
+          break;
+        }
+      }
+    }
+  }
+
+}
+
+public sealed partial class TransactionMessage : pb::IMessage<TransactionMessage> {
+  private static readonly pb::MessageParser<TransactionMessage> _parser = new pb::MessageParser<TransactionMessage>(() => new TransactionMessage());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<TransactionMessage> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PublisherReflection.Descriptor.MessageTypes[8]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public TransactionMessage() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public TransactionMessage(TransactionMessage other) : this() {
+    senderAddress_ = other.senderAddress_ != null ? other.senderAddress_.Clone() : null;
+    xml_ = other.xml_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public TransactionMessage Clone() {
+    return new TransactionMessage(this);
+  }
+
+  /// <summary>Field number for the "SenderAddress" field.</summary>
+  public const int SenderAddressFieldNumber = 1;
+  private global::ServerAddressMessage senderAddress_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public global::ServerAddressMessage SenderAddress {
+    get { return senderAddress_; }
+    set {
+      senderAddress_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "xml" field.</summary>
+  public const int XmlFieldNumber = 2;
+  private string xml_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public string Xml {
+    get { return xml_; }
+    set {
+      xml_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as TransactionMessage);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(TransactionMessage other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(SenderAddress, other.SenderAddress)) return false;
+    if (Xml != other.Xml) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (senderAddress_ != null) hash ^= SenderAddress.GetHashCode();
+    if (Xml.Length != 0) hash ^= Xml.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+    if (senderAddress_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(SenderAddress);
+    }
+    if (Xml.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Xml);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    if (senderAddress_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(SenderAddress);
+    }
+    if (Xml.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Xml);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(TransactionMessage other) {
+    if (other == null) {
+      return;
+    }
+    if (other.senderAddress_ != null) {
+      if (senderAddress_ == null) {
+        SenderAddress = new global::ServerAddressMessage();
+      }
+      SenderAddress.MergeFrom(other.SenderAddress);
+    }
+    if (other.Xml.Length != 0) {
+      Xml = other.Xml;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (senderAddress_ == null) {
+            SenderAddress = new global::ServerAddressMessage();
+          }
+          input.ReadMessage(SenderAddress);
+          break;
+        }
+        case 18: {
+          Xml = input.ReadString();
           break;
         }
       }

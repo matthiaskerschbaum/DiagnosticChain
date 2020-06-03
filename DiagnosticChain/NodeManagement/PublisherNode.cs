@@ -1,5 +1,6 @@
 ﻿using Blockchain;
 using Blockchain.Interfaces;
+using Blockchain.Transactions;
 using Blockchain.Utilities;
 using Grpc.Core;
 using NetworkingFacilities.Clients;
@@ -23,11 +24,21 @@ namespace NodeManagement
         //Buffering for transaction handling
         private ParticipantHandler participantHandler_Buffered = new ParticipantHandler(); //For Processing of transactions that have been received, but not published yet
         Semaphore manipulateBufferedTransactions = new Semaphore(1, 1);
-        Semaphore mainpulateChain = new Semaphore(1, 1);
+        Semaphore manipulateChain = new Semaphore(1, 1);
 
         //Parallel running tasks
         internal Timer blockGenerator;
         internal Timer blockProcessor;
+
+        public PublisherNode() :base()
+        {
+
+        }
+
+        public PublisherNode(ServerAddress selfAddress) : base(selfAddress)
+        {
+
+        }
 
         public Chain GetChain()
         {
@@ -55,6 +66,11 @@ namespace NodeManagement
             return chain.Blockhead == null ? -1 : chain.Blockhead.Index;
         }
 
+        public List<Blockchain.Entities.Physician> GetPendingPhysicians()
+        {
+            return participantHandler.proposedPhysicians;
+        }
+
         public void InitializeEmptyChain(ITransaction initialPublisher, ITransaction initialVote)
         {
             if (chain.IsEmpty())
@@ -78,16 +94,19 @@ namespace NodeManagement
         public bool OnReceiveChain(Chain chain)
         {
             var success = false;
+            var transactions = chain.GetTransactions();
 
-            //TODO Publish Blocks stoppen
-            mainpulateChain.WaitOne();
+            manipulateBufferedTransactions.WaitOne();
+            manipulateChain.WaitOne();
 
-            //TODO Chain validieren (Stimmen Publisher, Physicians, Patients etc.)
-            success = chain.ValidateContextual(participantHandler, new List<Chain>() { this.chain });
+            var participantHandler_Clone = participantHandler.Clone();
+            success = chain.ValidateContextual(participantHandler_Clone, new List<Chain>() { this.chain });
 
             //TODO Chain mit aktuellem Stand der Blockchain abgleichen => Collisions resolven (Nicht einfügen wenn aktueller Stand neuer ist als die empfangene Chain)
             if (success)
             {
+                success &= chain.ProcessContracts(participantHandler, new List<Chain>() { this.chain });
+                chain.ProcessContracts(participantHandler_Buffered, new List<Chain>() { this.chain });
                 success &= this.chain.Add(chain);
             }
 
@@ -96,37 +115,31 @@ namespace NodeManagement
             //TODO Wenn Chain eingefügt wird: Transaktionen durchgehen, und alle offenen Transaktionen löschen, die in neuer Chain enthalten sind
             //TODO Wenn Teile der alten Chain wegfliegen: Transaktionen durchgehen und die in offene Transaktionen mit aufnehmen, die nicht in neuer Chain enthalten sind
 
-            mainpulateChain.Release();
+            manipulateChain.Release();
+            manipulateBufferedTransactions.Release();
 
+            CLI.DisplayLine("Added " + transactions.Count + " transactions " + (success ? "successfully" : "unsuccessfully"));
+            foreach (var t in transactions)
+            {
+                CLI.DisplayLine("\t" + t.AsString());
+            }
             return success;
         }
 
-        public void OnReceiveRegistrationRequest(Uri requestingNode)
+        public bool OnReceiveTransaction(ITransaction transaction)
         {
-            throw new NotImplementedException();
-            //TODO Node zu KnownNodes hinzufügen
-            //TODO ACK-Message zurück schicken
-            //TODO Neuen Node an alle KnownNodes verbreiten
-        }
-
-        public void OnReceiveSetupRequest(Uri requestingNode)
-        {
-            throw new NotImplementedException();
-            //TODO Node zu KnownNodes hinzufügen
-            //TODO Blockchain über's Netz verschicken (synchron)
-            //TODO Neuen Node an alle KnownNodes verbreiten
-        }
-
-        public void OnReceiveTransaction(ITransaction transaction)
-        {
+            var success = true;
             manipulateBufferedTransactions.WaitOne();
             var peekTransactions = transactionBuffer.Peek();
             if (transaction.ValidateContextual(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions }))
             {
                 transactionBuffer.RecordTransaction(transaction);
-                transaction.ProcessContract(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions });
+                success &= transaction.ProcessContract(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions });
             }
+            CLI.DisplayLine("Recorded " + transactionBuffer.openTransactions.Count + " transactions " + (success ? "successfully" : "unsuccessfully"));
             manipulateBufferedTransactions.Release();
+
+            return success;
         }
 
         public void PublishChain(Chain chain)
@@ -140,7 +153,7 @@ namespace NodeManagement
             //TODO Überprüfen, ob Node überhaupt publishen darf (Registrierung eines neuen Publishers muss durchgehen)
 
             manipulateBufferedTransactions.WaitOne();
-            mainpulateChain.WaitOne();
+            manipulateChain.WaitOne();
             Chain appendix = null;
             if (transactionBuffer.HasBlocks())
             {
@@ -149,7 +162,7 @@ namespace NodeManagement
                 while (transactionBuffer.HasBlocks())
                 {
                     var nextBlock = transactionBuffer.GetNextBlock();
-                    nextBlock.Publisher = User.PublisherAddress;
+                    nextBlock.Publisher = User.UserAddress;
 
                     if (chain.IsEmpty())
                     {
@@ -173,24 +186,25 @@ namespace NodeManagement
                     appendix.Add(nextBlock);
                 }
 
-                appendix.ProcessContracts(participantHandler, new List<Chain>() { chain });
+                var success = appendix.ProcessContracts(participantHandler, new List<Chain>() { chain });
                 participantHandler_Buffered = participantHandler.Clone();
 
                 foreach (var n in knownNodes)
                 {
                     try
                     {
-                        new PublisherClient(n).SendChain(appendix);
+                        new PublisherClient(n, selfAddress).SendChain(appendix);
                     }
                     catch (RpcException)
                     { //TODO Nodes flaggen, von denen keine Antwort kommt 
                     }
                 }
 
+                CLI.DisplayLine("Published " + appendix.GetTransactions().Count + " transactions " + (success ? "successfully" : "unsuccessfully"));
                 chain.Add(appendix);
             }
 
-            mainpulateChain.Release();
+            manipulateChain.Release();
             manipulateBufferedTransactions.Release();
         }
 

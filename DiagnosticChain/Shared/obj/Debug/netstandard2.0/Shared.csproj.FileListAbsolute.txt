@@ -5,3 +5,4 @@ D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.Assemb
 D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
 D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.dll
 D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.pdb
+D:\DiagnosticChain\DiagnosticChain\Shared\obj\Debug\netstandard2.0\Shared.csprojAssemblyReference.cache

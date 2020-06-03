@@ -10,10 +10,12 @@ namespace NetworkingFacilities.Clients
     public class PublisherClient
     {
         private ServerAddress serverAddress;
+        private ServerAddress selfAddress;
 
-        public PublisherClient(ServerAddress serverAddress)
+        public PublisherClient(ServerAddress serverAddress, ServerAddress selfAddress)
         {
             this.serverAddress = serverAddress;
+            this.selfAddress = selfAddress;
         }
 
         private Channel OpenConnection()
@@ -36,12 +38,21 @@ namespace NetworkingFacilities.Clients
         {
             var channel = OpenConnection();
             var client = new PublisherServer.PublisherServerClient(channel);
-            var response = client.RegisterNode(new ServerAddressMessage
+            AckMessage response = new AckMessage();
+            try
             {
-                Ip = selfAddress.Ip
-                ,
-                Port = selfAddress.Port
-            });
+                CLI.DisplayLine("Attempting connection");
+                response = client.RegisterNode(new ServerAddressMessage
+                {
+                    Ip = selfAddress.Ip
+                    ,
+                    Port = selfAddress.Port
+                });
+            } catch (RpcException)
+            {
+                CLI.DisplayLine("Connection failed");
+                return false;
+            }
 
             channel.ShutdownAsync().Wait();
 
@@ -55,6 +66,14 @@ namespace NetworkingFacilities.Clients
 
             var response = client.RequestDeltaChain(new DeltaRequest
             {
+                SenderAddress = new ServerAddressMessage()
+                {
+
+                    Ip = selfAddress.Ip
+                    ,
+                    Port = selfAddress.Port
+                }
+                ,
                 CurrentIndex = currentIndex
             });
 
@@ -80,12 +99,54 @@ namespace NetworkingFacilities.Clients
             return new Chain(response.Xml);
         }
 
+        public List<ServerAddress> RequestNodes()
+        {
+            var channel = OpenConnection();
+            var client = new PublisherServer.PublisherServerClient(channel);
+
+            var response = client.RequestNodes(
+                new ServerAddressMessage()
+                {
+                    Ip = selfAddress.Ip
+                    ,
+                    Port = selfAddress.Port
+                }
+                );
+
+            channel.ShutdownAsync();
+
+            List<ServerAddress> ret = new List<ServerAddress>();
+
+            foreach (var n in response.AddressList)
+            {
+                ret.Add(new ServerAddress()
+                {
+                    Ip = n.Ip
+                    ,
+                    Port = n.Port
+                });
+            }
+
+            return ret;
+        }
+
         public AckMessage SendChain(Chain chain)
         {
             var channel = OpenConnection();
             var client = new PublisherServer.PublisherServerClient(channel);
 
-            var response = client.ReceiveChain(new ChainMessage { Xml = chain.AsXML() });
+            var response = client.ReceiveChain(new ChainMessage
+            {
+                SenderAddress = new ServerAddressMessage()
+                {
+
+                    Ip = selfAddress.Ip
+                    ,
+                    Port = selfAddress.Port
+                }
+                ,
+                Xml = chain.AsXML()
+            });
 
             return response;
         }

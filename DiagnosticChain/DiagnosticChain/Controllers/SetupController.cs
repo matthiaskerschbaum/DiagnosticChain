@@ -12,8 +12,8 @@ namespace DiagnosticChain.Controllers
         private Dictionary<string, string> users = new Dictionary<string, string>();
         private static Dictionary<string, IUserInterface> nodeTypes = new Dictionary<string, IUserInterface> {
             { "publisher", new PublisherInterface() }
-            ,{ "physician", new SetupInterface() }
-            ,{ "query", new SetupInterface() }
+            ,{ "physician", new PhysicianInterface() }
+            ,{ "query", new QueryInterface() }
         };
 
         public SetupController()

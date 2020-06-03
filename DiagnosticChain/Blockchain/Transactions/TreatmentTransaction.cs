@@ -11,7 +11,7 @@ namespace Blockchain.Transactions
         public Guid PhysicianAddress { get; set; }
         public Guid PatientAddress { get; set; }
 
-        internal override string AsString()
+        public override string AsString()
         {
             return base.AsString() + "|" + PhysicianAddress + "|" + PatientAddress;
         }

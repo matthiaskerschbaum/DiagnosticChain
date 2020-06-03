@@ -9,6 +9,11 @@ namespace Shared
             Console.WriteLine(line);
         }
 
+        public static string InlinePrompt()
+        {
+            return Console.ReadLine();
+        }
+
         public static string PromptUser(string prompt)
         {
             Console.WriteLine(prompt);

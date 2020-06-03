@@ -4,11 +4,18 @@ using System.Text;
 
 namespace DiagnosticChain.Entities
 {
-    class Treatment
+    public class Treatment
     {
         public Guid TreatmentAddress { get; set; }
+        public DateTime Created { get; set; }
         public List<string> Symptoms { get; set; }
         public List<string> Diagnoses { get; set; }
+
+        public Treatment()
+        {
+            Symptoms = new List<string>();
+            Diagnoses = new List<string>();
+        }
 
         public void AddSymptom(string symptom)
         {

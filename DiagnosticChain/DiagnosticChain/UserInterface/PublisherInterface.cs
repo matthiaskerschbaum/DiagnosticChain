@@ -35,6 +35,7 @@ namespace DiagnosticChain.UserInterface
                 , { "server stats address", DisplayServerAddress }
                 , { "test transactions", GenerateTestTransactions }
                 , { "validate chain", ValidateChain }
+                , { "vote physician", VotePhysician }
                 , { "vote publisher", VotePublisher }
             };
         }
@@ -402,6 +403,37 @@ namespace DiagnosticChain.UserInterface
             CLI.DisplayLineDelimiter();
         }
 
+        private void VotePhysician()
+        {
+            CLI.DisplayLineDelimiter();
+            CLI.DisplayLine("Vote for proposed physician");
+            CLI.DisplayLineDelimiter();
+            var proposedPhysicians = controller.GetProposedPhysicians().ToArray();
+
+            CLI.DisplayLine("The following physicians are available:\n");
+            for (int i = 0; i < proposedPhysicians.Length; i++)
+            {
+                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
+            }
+            CLI.DisplayLineDelimiter();
+
+            var input = CLI.PromptUser("Please enter the index of the publisher you are voting for, or enter Q to quit: ");
+
+            if (input == "Q") return;
+            int index;
+            if (int.TryParse(input, out index) && index < proposedPhysicians.Length)
+            {
+                var vote = CLI.PromptUser("Please enter y for confirmed, or n for dismiss");
+                controller.VoteFor(proposedPhysicians[index].Address, vote == "y");
+            }
+            else
+            {
+                CLI.DisplayLine("Physician not found");
+            }
+
+            CLI.DisplayLineDelimiter();
+        }
+
         private void VotePublisher()
         {
             CLI.DisplayLineDelimiter();
@@ -423,7 +455,7 @@ namespace DiagnosticChain.UserInterface
             if (int.TryParse(input, out index) && index < proposedPublishers.Length)
             {
                 var vote = CLI.PromptUser("Please enter y for confirmed, or n for dismiss");
-                controller.VoteForPublisher(proposedPublishers[index].Address, vote == "y");
+                controller.VoteFor(proposedPublishers[index].Address, vote == "y");
             }
             else
             {

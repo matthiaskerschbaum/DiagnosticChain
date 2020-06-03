@@ -6,6 +6,13 @@ namespace Shared
 {
     public class ServerAddress : IEquatable<ServerAddress>
     {
+        public static ServerAddress EmptyAddress = new ServerAddress()
+        {
+            Ip = "-1"
+            ,
+            Port = -1
+        };
+
         public string Ip;
         public int Port;
 

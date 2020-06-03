@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Blockchain.Entities;
+using Blockchain.Transactions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +10,8 @@ namespace Blockchain.Interfaces
     {
         Chain GetChain();
         Chain GetChainDelta(long currentIndex);
+        List<Physician> GetPendingPhysicians();
         bool OnReceiveChain(Chain chain);
-        void OnReceiveTransaction(ITransaction transaction);
+        bool OnReceiveTransaction(ITransaction transaction);
     }
 }

@@ -27,7 +27,7 @@ namespace Blockchain.Interfaces
         public Guid SenderAddress { get; set; }
         public string SenderVerification { get; set; }
 
-        internal virtual string AsString()
+        public virtual string AsString()
         {
             return Type + "|" + TransactionId + "|" + Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff") + "|" + SenderAddress;
         }

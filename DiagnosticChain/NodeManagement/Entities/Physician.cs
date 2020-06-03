@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NodeManagement.Entities
 {
-    class Physician
+    public class Physician
     {
         public Guid PhysicianAddress { get; set; }
         public string PublicKey { get; set; }

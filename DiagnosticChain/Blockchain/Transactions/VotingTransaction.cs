@@ -11,7 +11,7 @@ namespace Blockchain.Transactions
         public Guid TransactionAddress { get; set; }
         public bool Vote { get; set; }
 
-        internal override string AsString()
+        public override string AsString()
         {
             return base.AsString() + "|" + TransactionAddress + "|" + Vote;
         }
@@ -21,7 +21,7 @@ namespace Blockchain.Transactions
             return 
                 (participantHandler.IsEmpty() && participantHandler.IsVotablePublisher(TransactionAddress))
                 || ((participantHandler.IsVotablePublisher(TransactionAddress) || participantHandler.IsVotablePhysician(TransactionAddress))
-                    && participantHandler.HasPublisher(SenderAddress)
+                    && participantHandler.HasSender(SenderAddress)
                     && ValidateTransactionIntegrity(participantHandler.GetSenderKey(SenderAddress)));
         }
 

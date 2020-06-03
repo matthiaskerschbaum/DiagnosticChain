@@ -1,4 +1,10 @@
-﻿using DiagnosticChain.UserInterface;
+﻿using Blockchain.Interfaces;
+using Blockchain.Transactions;
+using DiagnosticChain.UserInterface;
+using Shared;
+using System;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace DiagnosticChain
 {

@@ -45,7 +45,7 @@ namespace DiagnosticChain.Controllers
             {
                 var newServer = new Server
                 {
-                    Services = { PublisherServer.BindService(new PublisherServerImpl(node, node)) },
+                    Services = { PublisherServer.BindService(new PublisherServerImpl(node, node, serverSettings)) },
                     Ports = { new ServerPort(newIp, newPort, ServerCredentials.Insecure) }
                 };
                 newServer.Start();
@@ -64,10 +64,11 @@ namespace DiagnosticChain.Controllers
                 ,
                 Port = newPort
             };
+            node.SetSelfAddress(serverSettings);
 
             server = new Server
             {
-                Services = { PublisherServer.BindService(new PublisherServerImpl(node, node)) },
+                Services = { PublisherServer.BindService(new PublisherServerImpl(node, node, serverSettings)) },
                 Ports = { new ServerPort(newIp, newPort, ServerCredentials.Insecure) }
             };
             server.Start();
@@ -103,7 +104,7 @@ namespace DiagnosticChain.Controllers
             return node.GetChainStatisics().GetOverviewPerBlock();
         }
 
-        internal List<Physician> GetConfirmedPhysicians()
+        internal List<Blockchain.Entities.Physician> GetConfirmedPhysicians()
         {
             var physicians = node.GetConfirmedPhysicians();
             physicians.Sort((x, y) => x.Address.CompareTo(y.Address));
@@ -117,14 +118,14 @@ namespace DiagnosticChain.Controllers
             return publishers;
         }
 
-        internal List<Patient> GetPatients()
+        internal List<Blockchain.Entities.Patient> GetPatients()
         {
             var patients = node.GetPatients();
             patients.Sort((x, y) => x.Address.CompareTo(y.Address));
             return patients;
         }
 
-        internal List<Physician> GetProposedPhysicians()
+        internal List<Blockchain.Entities.Physician> GetProposedPhysicians()
         {
             var physicians = node.GetProposedPhysicians();
             physicians.Sort((x, y) => x.Address.CompareTo(y.Address));
@@ -177,23 +178,24 @@ namespace DiagnosticChain.Controllers
                 XmlSerializer serializer = new XmlSerializer(node.GetType());
                 node = (PublisherNode)serializer.Deserialize(new StringReader(nodeState));
                 currentUser = node.User.Username;
-                transactionGenerator = new TransactionGenerator(node.User.PublisherAddress, node.User.Keys.PrivateKey);
+                transactionGenerator = new TransactionGenerator(node.User.UserAddress, node.User.Keys.PrivateKey);
 
                 //TODO read server state
                 var serverState = FileHandler.Read(currentUser + FileHandler.UserState_ServerPath);
                 serializer = new XmlSerializer(serverSettings.GetType());
                 serverSettings = (ServerAddress)serializer.Deserialize(new StringReader(serverState));
+                node.SetSelfAddress(serverSettings);
             }
         }
 
         internal string PingNode(ServerAddress url)
         {
-            return new PublisherClient(url).PingNode().Status.ToString();
+            return new PublisherClient(url, serverSettings).PingNode().Status.ToString();
         }
 
         internal bool RegisterAt(ServerAddress address)
         {
-            if (new PublisherClient(address).RegisterNode(serverSettings))
+            if (new PublisherClient(address, serverSettings).RegisterNode(serverSettings))
             {
                 node.AddServerAddress(address);
                 return RequestChain() || node.IsChainInitialized(); //Either chain file was loaded from another client, or the chain is initialized and up to date
@@ -212,7 +214,7 @@ namespace DiagnosticChain.Controllers
             {
                 try
                 {
-                    receivedChain = new PublisherClient(n).RequestFullChain();
+                    receivedChain = new PublisherClient(n, serverSettings).RequestFullChain();
 
                     if (node.OnReceiveChain(receivedChain))
                     {
@@ -233,7 +235,7 @@ namespace DiagnosticChain.Controllers
             {
                 try
                 {
-                    var receivedChain = new PublisherClient(n).RequestDeltaChain(currentIndex);
+                    var receivedChain = new PublisherClient(n, serverSettings).RequestDeltaChain(currentIndex);
 
                     if (!receivedChain.IsEmpty() && node.OnReceiveChain(receivedChain))
                     {
@@ -288,16 +290,18 @@ namespace DiagnosticChain.Controllers
                 ,
                 Keys = keys
                 ,
-                PublisherAddress = registration.TransactionId
+                UserAddress = registration.TransactionId
             };
 
             serverSettings = selfAddress;
+            node.SetSelfAddress(serverSettings);
 
             Start();
 
             if (initializerAddress != null)
             {
                 RegisterAt(initializerAddress);
+                UpdateKnownNodes();
             }
 
             if (!node.IsChainInitialized())
@@ -321,17 +325,18 @@ namespace DiagnosticChain.Controllers
         internal void Start()
         {
             LoadState();
-            transactionGenerator = new TransactionGenerator(node.User.PublisherAddress, node.User.Keys.PrivateKey);
+            transactionGenerator = new TransactionGenerator(node.User.UserAddress, node.User.Keys.PrivateKey);
             node.LoadChain();
-
+            
             server = new Server
             {
-                Services = { PublisherServer.BindService(new PublisherServerImpl(node, node)) },
+                Services = { PublisherServer.BindService(new PublisherServerImpl(node, node, serverSettings)) },
                 Ports = { new ServerPort(serverSettings.Ip, serverSettings.Port, ServerCredentials.Insecure) }
             };
             server.Start();
 
             RequestChainDelta();
+            UpdateKnownNodes();
 
             StartPublishing();
         }
@@ -351,14 +356,40 @@ namespace DiagnosticChain.Controllers
             node.StopPublishing();
         }
 
+        private void UpdateKnownNodes()
+        {
+            var nodes2Add = new List<ServerAddress>();
+
+            foreach (var n in node.knownNodes)
+            {
+                try
+                {
+                    var nodeList = new PublisherClient(n, serverSettings).RequestNodes();
+
+                    foreach (var newN in nodeList)
+                    {
+                        if (!node.knownNodes.Contains(newN) && !nodes2Add.Contains(newN) && newN.FullAddress != serverSettings.FullAddress)
+                        {
+                            nodes2Add.Add(newN);
+                        }
+                    }
+                } catch (RpcException) { }
+            }
+
+            foreach (var n in nodes2Add)
+            {
+                node.AddServerAddress(n);
+            }
+        }
+
         internal bool ValidateChain()
         {
             return node.ValidateChain();
         }
 
-        internal void VoteForPublisher(Guid publisher, bool vote)
+        internal void VoteFor(Guid participant, bool vote)
         {
-            var votingTransaction = transactionGenerator.GenerateVotingTransaction(publisher, vote);
+            var votingTransaction = transactionGenerator.GenerateVotingTransaction(participant, vote);
             node.OnReceiveTransaction(votingTransaction);
         }
     }

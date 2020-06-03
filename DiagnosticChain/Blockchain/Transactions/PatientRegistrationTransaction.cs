@@ -13,7 +13,7 @@ namespace Blockchain.Transactions
         public string Region { get; set; }
         public string Birthyear { get; set; }
 
-        internal override string AsString()
+        public override string AsString()
         {
             return base.AsString() + "|" + Country + "|" + Region + "|" + Birthyear;
         }

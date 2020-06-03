@@ -21,6 +21,17 @@ namespace NodeManagement
 
         //Known nodes
         public List<ServerAddress> knownNodes = new List<ServerAddress>();
+        public ServerAddress selfAddress;
+
+        public Node()
+        {
+
+        }
+
+        public Node(ServerAddress selfAddress)
+        {
+            this.selfAddress = selfAddress;
+        }
 
         public void AddServerAddress(ServerAddress address)
         {
@@ -106,6 +117,11 @@ namespace NodeManagement
         public void SaveChain()
         {
             FileHandler.Save(User.Username + FileHandler.ChainPath, chain.AsXML());
+        }
+
+        public void SetSelfAddress(ServerAddress selfAddress)
+        {
+            this.selfAddress = selfAddress;
         }
 
         public bool ValidateChain()

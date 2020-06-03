@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Shared.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Blockchain.Entities
 {
-    public class Physician
+    public class Physician : WebSerializable
     {
         public Guid Address { get; set; }
         public RSAParameters PublicKey { get; set; }

@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-16"?><ArrayOfPatient xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Patient><PatientAddress>3600ba85-0196-44a3-99a7-55f12f067435</PatientAddress><Name>Flo</Name><Country>Austria</Country><Region>Salzburg</Region><Birthyear>1985</Birthyear><Treatments /></Patient></ArrayOfPatient>

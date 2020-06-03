@@ -10,9 +10,12 @@ option objc_class_prefix = "PuP";
 service PublisherServer {
 	rpc Ping(PingRequest) returns (AckMessage) {}
 	rpc ReceiveChain(ChainMessage) returns (AckMessage) {}
+	rpc ReceiveTransaction(TransactionMessage) returns (AckMessage) {}
 	rpc RegisterNode(ServerAddressMessage) returns (AckMessage) {}
 	rpc RequestDeltaChain(DeltaRequest) returns (ChainMessage) {}
 	rpc RequestFullChain(ServerAddressMessage) returns (ChainMessage) {}
+	rpc RequestNodes(ServerAddressMessage) returns (ServerAddressMessageList) {}
+	rpc RequestPendingPhysicians(ServerAddressMessage) returns (PhysicianMessageList) {}
 }
 
 message AckMessage {
@@ -24,11 +27,21 @@ message AckMessage {
 }
 
 message ChainMessage {
-	string xml = 1;
+	ServerAddressMessage SenderAddress = 1;
+	string xml = 2;
 }
 
 message DeltaRequest {
-	int64 currentIndex = 1; 
+	ServerAddressMessage SenderAddress = 1;
+	int64 currentIndex = 2; 
+}
+
+message PhysicianMessage {
+	string xml = 1;
+}
+
+message PhysicianMessageList {
+	repeated PhysicianMessage physicianList = 1;
 }
 
 message PingRequest {}
@@ -36,4 +49,13 @@ message PingRequest {}
 message ServerAddressMessage {
 	string ip = 1;
 	int32 port = 2;
+}
+
+message ServerAddressMessageList {
+	repeated ServerAddressMessage addressList = 1;
+}
+
+message TransactionMessage {
+	ServerAddressMessage SenderAddress = 1;
+	string xml = 2;
 }

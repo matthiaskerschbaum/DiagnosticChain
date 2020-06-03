@@ -14,8 +14,11 @@ public static partial class PublisherServer
   static readonly grpc::Marshaller<global::PingRequest> __Marshaller_PingRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::PingRequest.Parser.ParseFrom);
   static readonly grpc::Marshaller<global::AckMessage> __Marshaller_AckMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::AckMessage.Parser.ParseFrom);
   static readonly grpc::Marshaller<global::ChainMessage> __Marshaller_ChainMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::ChainMessage.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::TransactionMessage> __Marshaller_TransactionMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::TransactionMessage.Parser.ParseFrom);
   static readonly grpc::Marshaller<global::ServerAddressMessage> __Marshaller_ServerAddressMessage = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::ServerAddressMessage.Parser.ParseFrom);
   static readonly grpc::Marshaller<global::DeltaRequest> __Marshaller_DeltaRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::DeltaRequest.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::ServerAddressMessageList> __Marshaller_ServerAddressMessageList = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::ServerAddressMessageList.Parser.ParseFrom);
+  static readonly grpc::Marshaller<global::PhysicianMessageList> __Marshaller_PhysicianMessageList = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::PhysicianMessageList.Parser.ParseFrom);
 
   static readonly grpc::Method<global::PingRequest, global::AckMessage> __Method_Ping = new grpc::Method<global::PingRequest, global::AckMessage>(
       grpc::MethodType.Unary,
@@ -29,6 +32,13 @@ public static partial class PublisherServer
       __ServiceName,
       "ReceiveChain",
       __Marshaller_ChainMessage,
+      __Marshaller_AckMessage);
+
+  static readonly grpc::Method<global::TransactionMessage, global::AckMessage> __Method_ReceiveTransaction = new grpc::Method<global::TransactionMessage, global::AckMessage>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "ReceiveTransaction",
+      __Marshaller_TransactionMessage,
       __Marshaller_AckMessage);
 
   static readonly grpc::Method<global::ServerAddressMessage, global::AckMessage> __Method_RegisterNode = new grpc::Method<global::ServerAddressMessage, global::AckMessage>(
@@ -52,6 +62,20 @@ public static partial class PublisherServer
       __Marshaller_ServerAddressMessage,
       __Marshaller_ChainMessage);
 
+  static readonly grpc::Method<global::ServerAddressMessage, global::ServerAddressMessageList> __Method_RequestNodes = new grpc::Method<global::ServerAddressMessage, global::ServerAddressMessageList>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "RequestNodes",
+      __Marshaller_ServerAddressMessage,
+      __Marshaller_ServerAddressMessageList);
+
+  static readonly grpc::Method<global::ServerAddressMessage, global::PhysicianMessageList> __Method_RequestPendingPhysicians = new grpc::Method<global::ServerAddressMessage, global::PhysicianMessageList>(
+      grpc::MethodType.Unary,
+      __ServiceName,
+      "RequestPendingPhysicians",
+      __Marshaller_ServerAddressMessage,
+      __Marshaller_PhysicianMessageList);
+
   /// <summary>Service descriptor</summary>
   public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
   {
@@ -72,6 +96,11 @@ public static partial class PublisherServer
       throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
     }
 
+    public virtual global::System.Threading.Tasks.Task<global::AckMessage> ReceiveTransaction(global::TransactionMessage request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
     public virtual global::System.Threading.Tasks.Task<global::AckMessage> RegisterNode(global::ServerAddressMessage request, grpc::ServerCallContext context)
     {
       throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
@@ -83,6 +112,16 @@ public static partial class PublisherServer
     }
 
     public virtual global::System.Threading.Tasks.Task<global::ChainMessage> RequestFullChain(global::ServerAddressMessage request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::ServerAddressMessageList> RequestNodes(global::ServerAddressMessage request, grpc::ServerCallContext context)
+    {
+      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+    }
+
+    public virtual global::System.Threading.Tasks.Task<global::PhysicianMessageList> RequestPendingPhysicians(global::ServerAddressMessage request, grpc::ServerCallContext context)
     {
       throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
     }
@@ -144,6 +183,22 @@ public static partial class PublisherServer
     {
       return CallInvoker.AsyncUnaryCall(__Method_ReceiveChain, null, options, request);
     }
+    public virtual global::AckMessage ReceiveTransaction(global::TransactionMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return ReceiveTransaction(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::AckMessage ReceiveTransaction(global::TransactionMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_ReceiveTransaction, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> ReceiveTransactionAsync(global::TransactionMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return ReceiveTransactionAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::AckMessage> ReceiveTransactionAsync(global::TransactionMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_ReceiveTransaction, null, options, request);
+    }
     public virtual global::AckMessage RegisterNode(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
     {
       return RegisterNode(request, new grpc::CallOptions(headers, deadline, cancellationToken));
@@ -192,6 +247,38 @@ public static partial class PublisherServer
     {
       return CallInvoker.AsyncUnaryCall(__Method_RequestFullChain, null, options, request);
     }
+    public virtual global::ServerAddressMessageList RequestNodes(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestNodes(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::ServerAddressMessageList RequestNodes(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_RequestNodes, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::ServerAddressMessageList> RequestNodesAsync(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestNodesAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::ServerAddressMessageList> RequestNodesAsync(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_RequestNodes, null, options, request);
+    }
+    public virtual global::PhysicianMessageList RequestPendingPhysicians(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestPendingPhysicians(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual global::PhysicianMessageList RequestPendingPhysicians(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.BlockingUnaryCall(__Method_RequestPendingPhysicians, null, options, request);
+    }
+    public virtual grpc::AsyncUnaryCall<global::PhysicianMessageList> RequestPendingPhysiciansAsync(global::ServerAddressMessage request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+    {
+      return RequestPendingPhysiciansAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+    }
+    public virtual grpc::AsyncUnaryCall<global::PhysicianMessageList> RequestPendingPhysiciansAsync(global::ServerAddressMessage request, grpc::CallOptions options)
+    {
+      return CallInvoker.AsyncUnaryCall(__Method_RequestPendingPhysicians, null, options, request);
+    }
     /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
     protected override PublisherServerClient NewInstance(ClientBaseConfiguration configuration)
     {
@@ -206,9 +293,12 @@ public static partial class PublisherServer
     return grpc::ServerServiceDefinition.CreateBuilder()
         .AddMethod(__Method_Ping, serviceImpl.Ping)
         .AddMethod(__Method_ReceiveChain, serviceImpl.ReceiveChain)
+        .AddMethod(__Method_ReceiveTransaction, serviceImpl.ReceiveTransaction)
         .AddMethod(__Method_RegisterNode, serviceImpl.RegisterNode)
         .AddMethod(__Method_RequestDeltaChain, serviceImpl.RequestDeltaChain)
-        .AddMethod(__Method_RequestFullChain, serviceImpl.RequestFullChain).Build();
+        .AddMethod(__Method_RequestFullChain, serviceImpl.RequestFullChain)
+        .AddMethod(__Method_RequestNodes, serviceImpl.RequestNodes)
+        .AddMethod(__Method_RequestPendingPhysicians, serviceImpl.RequestPendingPhysicians).Build();
   }
 
   /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -219,9 +309,12 @@ public static partial class PublisherServer
   {
     serviceBinder.AddMethod(__Method_Ping, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::PingRequest, global::AckMessage>(serviceImpl.Ping));
     serviceBinder.AddMethod(__Method_ReceiveChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ChainMessage, global::AckMessage>(serviceImpl.ReceiveChain));
+    serviceBinder.AddMethod(__Method_ReceiveTransaction, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::TransactionMessage, global::AckMessage>(serviceImpl.ReceiveTransaction));
     serviceBinder.AddMethod(__Method_RegisterNode, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::AckMessage>(serviceImpl.RegisterNode));
     serviceBinder.AddMethod(__Method_RequestDeltaChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::DeltaRequest, global::ChainMessage>(serviceImpl.RequestDeltaChain));
     serviceBinder.AddMethod(__Method_RequestFullChain, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::ChainMessage>(serviceImpl.RequestFullChain));
+    serviceBinder.AddMethod(__Method_RequestNodes, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::ServerAddressMessageList>(serviceImpl.RequestNodes));
+    serviceBinder.AddMethod(__Method_RequestPendingPhysicians, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ServerAddressMessage, global::PhysicianMessageList>(serviceImpl.RequestPendingPhysicians));
   }
 
 }
