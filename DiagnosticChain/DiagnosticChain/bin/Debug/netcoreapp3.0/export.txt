@@ -1,0 +1,2 @@
+47bcd1fc-4d5a-420c-9366-16710d2e75e6	Austria	Salzburg	1985	72a7a0df-fd48-401e-8c2a-7927bdf24dce	2020-05-25 09:28:03	Übelkeit|	Alkintox|
+def26232-c2a6-4379-a2e6-24e450e0321a	Austria	Vienna	1992	db237a91-9bb1-4002-af74-0861b5cf3ac8	2020-05-30 02:42:13	R05|R50.80|	B34.2|
