@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 
 namespace Blockchain
 {
+    [Serializable]
     public class Block : WebSerializable
     {
         public long Index { get; set; }
@@ -65,13 +66,32 @@ namespace Blockchain
             return hit.Count() > 0;
         }
 
-        public bool ProcessContracts(ParticipantHandler participantHandler, List<Chain> chains)
+        public bool ProcessContracts(ParticipantHandler participantHandler, List<Chain> context)
         {
             var ret = true;
 
             foreach (var t in TransactionList)
             {
-                ret &= t.ProcessContract(participantHandler, chains);
+                try
+                {
+                    ret &= t.ProcessContract(participantHandler, context);
+                } catch (TransactionParkedException)
+                {
+                    ret &= true;
+
+                    if (t.GetType() == typeof(PatientRegistrationTransaction))
+                    {
+                        var prt = (PatientRegistrationTransaction)t;
+
+                        participantHandler.AddPatient(new Entities.Patient()
+                        {
+                            Address = prt.TransactionId,
+                            Country = prt.Country,
+                            Region = prt.Region,
+                            Birthyear = prt.Birthyear
+                        });
+                    }
+                }
             }
 
             return ret;

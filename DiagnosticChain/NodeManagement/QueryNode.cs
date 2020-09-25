@@ -59,6 +59,12 @@ namespace NodeManagement
             }
         }
 
+        public void UpdateChain(Chain chain)
+        {
+            participantHandler = new ParticipantHandler();
+            chain.ProcessContracts(participantHandler, new List<Chain>() { chain });
+        }
+
         public List<DataExport> ExtractData(Func<PatientRegistrationTransaction, bool> patientExp
             , Func<TreatmentTransaction, bool> treatmentExp
             , Func<SymptomsTransaction, bool> symptomExp

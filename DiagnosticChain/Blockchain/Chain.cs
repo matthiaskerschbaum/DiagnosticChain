@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 
 namespace Blockchain
 {
+    [Serializable]
     public class Chain
     {
         public Block Blockhead { get; set; }
@@ -59,13 +60,20 @@ namespace Blockchain
 
         //TODO Überprüfung einfügen, ob Chain eingefügt werden soll oder nicht (Collision Management)
         //TODO Rückgabewert auf Chain ändern, und alle Blocks zurück geben, die gelöscht werden
-        public bool Add(Chain chain)
+        public List<Block> Add(Chain chain)
         {
+            List<Block> ret = new List<Block>();
+
             //If chain is currently empty, set Blockhead to inserted chain's Blockhead and return true
             if (Blockhead == null)
             {
                 Blockhead = chain.Blockhead;
-                return true;
+                return ret;
+            }
+
+            if (chain.Blockhead.Index <= Blockhead.Index)
+            {
+                return ret;
             }
 
             //Get first block in chain
@@ -73,40 +81,41 @@ namespace Blockchain
             while (firstBlock.PreviousBlock != null) firstBlock = firstBlock.PreviousBlock;
 
             //Add chain directly if hashes and indexes match to Blockhead
-            if (Blockhead == null || (firstBlock.PreviousHash == Blockhead.Hash && firstBlock.Index == Blockhead.Index + 1))
+            if ((firstBlock.PreviousHash == Blockhead.Hash && firstBlock.Index == Blockhead.Index + 1))
             {
                 firstBlock.PreviousBlock = Blockhead;
                 Blockhead = chain.Blockhead;
 
-                return true;
+                return ret;
             }
             else
             {
                 //Search matching block if the chain replaces previous blocks
                 var referenceBlock = Blockhead;
 
-                while (referenceBlock.PreviousBlock != null
-                    && firstBlock.PreviousHash != referenceBlock.PreviousBlock.Hash
+                while (referenceBlock != null
+                    && firstBlock.PreviousHash != referenceBlock.Hash
                     && firstBlock.Index >= referenceBlock.Index)
                 {
+                    ret.Add(referenceBlock);
                     referenceBlock = referenceBlock.PreviousBlock;
                 }
 
                 //Attach chain at correct position if possible
                 if (referenceBlock != null &&
-                    firstBlock.PreviousHash == referenceBlock.PreviousBlock.Hash
-                    && firstBlock.Index == referenceBlock.Index)
+                    firstBlock.PreviousHash == referenceBlock.Hash
+                    && firstBlock.Index == referenceBlock.Index+1)
                 {
-                    firstBlock.PreviousBlock = referenceBlock.PreviousBlock;
+                    firstBlock.PreviousBlock = referenceBlock;
                     firstBlock.ValidateSequence();
                     Blockhead = chain.Blockhead;
 
-                    return true;
+                    return ret;
                 }
             }
 
             //If no matching position is found in the blockchain, return false
-            return false;
+            return new List<Block>();
         }
 
         public string AsXML()

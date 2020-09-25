@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace Shared.Interfaces
 {
+    [Serializable]
     public abstract class WebSerializable
     {
         public string AsXML()

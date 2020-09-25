@@ -1,15 +1,11 @@
-﻿using Blockchain;
-using Blockchain.Transactions;
-using DiagnosticChain.Entities;
+﻿using Blockchain.Transactions;
 using Grpc.Core;
 using NetworkingFacilities.Clients;
 using NodeManagement;
 using NodeManagement.Entities;
 using Shared;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 

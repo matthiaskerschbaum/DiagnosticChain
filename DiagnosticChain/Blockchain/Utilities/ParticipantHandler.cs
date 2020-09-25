@@ -1,5 +1,6 @@
 ﻿using Blockchain.Entities;
 using Blockchain.Interfaces;
+using Blockchain.Transactions;
 using Blockchain.VotingMechanisms;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,15 @@ namespace Blockchain.Utilities
 {
     public class ParticipantHandler
     {
-        //TODO Ausprogrammieren
-        //Der speichert eine Liste aller bekannter Publisher, Physicians und Patienten und kann Transaktionen handeln und validieren
-
         public List<Publisher> confirmedPublishers = new List<Publisher>();
         public List<Physician> confirmedPhysicians = new List<Physician>();
         public List<Patient> confirmedPatients = new List<Patient>();
 
         public List<Publisher> proposedPublishers = new List<Publisher>();
         public List<Physician> proposedPhysicians = new List<Physician>();
+        public List<PatientRegistrationTransaction> parkedPatients = new List<PatientRegistrationTransaction>();
+        public List<TreatmentTransaction> parkedTreatments = new List<TreatmentTransaction>();
+        public List<SymptomsTransaction> parkedSymptoms = new List<SymptomsTransaction>();
 
         public List<Vote> pendingVotes = new List<Vote>();
 
@@ -63,6 +64,33 @@ namespace Blockchain.Utilities
             return votingMechanism.CastVoteForPublisher(this, publisherAddress, senderAddress);
         }
 
+        internal int CountSimilarPatients(string country, string region, string birthyear)
+        {
+            var hit = from p in confirmedPatients
+                      where p.Country == country && p.Region == region && p.Birthyear == birthyear
+                      select p;
+
+            return hit.Count();
+        }
+
+        public List<ITransaction> EvaluateParkedTransactions()
+        {
+            List<ITransaction> readyToProcess = new List<ITransaction>();
+
+            var anonymousPatients = from p in parkedPatients
+                                    group p by new { p.Country, p.Region, p.Birthyear } into pG
+                                    where pG.Count() >= 3
+                                    select pG;
+            var patientTransactions = from p in parkedPatients
+                                      where anonymousPatients.Where(ap => ap.Key.Country == p.Country && ap.Key.Region == p.Region && ap.Key.Birthyear == p.Birthyear).Any()
+                                      select p;
+
+            readyToProcess.AddRange(patientTransactions);
+            parkedPatients.RemoveAll(p => patientTransactions.Contains(p));
+
+            return readyToProcess;
+        }
+
         public List<Physician> GetConfirmedPhysicians()
         {
             confirmedPhysicians.Sort((x,y) => x.Address.CompareTo(y.Address));
@@ -79,15 +107,6 @@ namespace Blockchain.Utilities
         {
             confirmedPatients.Sort((x,y) => x.Address.CompareTo(y.Address));
             return confirmedPatients;
-        }
-
-        public RSAParameters GetPhysicianKey(Guid publisher)
-        {
-            var hit = (from p in confirmedPhysicians
-                       where p.Address == publisher
-                       select p.PublicKey).FirstOrDefault();
-
-            return hit;
         }
 
         public List<Physician> GetProposedPhysicians()
@@ -121,6 +140,15 @@ namespace Blockchain.Utilities
                                select p.PublicKey;
 
             return hitPublisher.Count() > 0 ? hitPublisher.First() : hitPhysician.FirstOrDefault();
+        }
+
+        internal bool HasParkedTreatment(Guid treatmentAddress)
+        {
+            var hit = from t in parkedTreatments
+                      where t.TransactionId == treatmentAddress
+                      select t;
+
+            return hit.Count() > 0;
         }
 
         public bool HasPatient(Guid patientAddress)
@@ -184,6 +212,16 @@ namespace Blockchain.Utilities
             return hit.Count() > 0;
         }
 
+        internal void ParkPatient(PatientRegistrationTransaction patient)
+        {
+            parkedPatients.Add(patient);
+        }
+
+        internal void ParkSymptom(SymptomsTransaction symptomsTransaction)
+        {
+            parkedSymptoms.Add(symptomsTransaction);
+        }
+
         public bool ProcessTransaction(ITransaction t, List<Chain> context)
         {
             return t.ProcessContract(this, context);
@@ -198,6 +236,5 @@ namespace Blockchain.Utilities
         {
             proposedPublishers.Add(publisher);
         }
-
     }
 }

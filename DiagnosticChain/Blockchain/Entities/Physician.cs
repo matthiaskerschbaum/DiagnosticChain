@@ -12,7 +12,7 @@ namespace Blockchain.Entities
         public RSAParameters PublicKey { get; set; }
         public string Country { get; set; }
         public string Region { get; set; }
-        public string Name { get; set; }
+        public string PhysicianIdentifier { get; set; }
 
         public Physician Clone()
         {
@@ -26,7 +26,7 @@ namespace Blockchain.Entities
                 ,
                 Region = Region
                 ,
-                Name = Name
+                PhysicianIdentifier = PhysicianIdentifier
             };
         }
     }

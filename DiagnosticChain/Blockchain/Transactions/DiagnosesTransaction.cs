@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Blockchain.Transactions
 {
+    [Serializable]
     public class DiagnosesTransaction : ITransaction
     {
         public Guid TreatmentTransactionAddress { get; set; }

@@ -12,6 +12,7 @@ using Blockchain.Utilities;
 
 namespace Blockchain.Interfaces
 {
+    [Serializable]
     [XmlInclude(typeof(DiagnosesTransaction))
             , XmlInclude(typeof(PatientRegistrationTransaction))
             , XmlInclude(typeof(PhysicianRegistrationTransaction))
@@ -42,8 +43,8 @@ namespace Blockchain.Interfaces
             return EncryptionHandler.VerifiySignature(AsString(), SenderVerification, publicKey);
         }
 
-        public abstract bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> chains);
+        public abstract bool ValidateContextual(ParticipantHandler participantHandler, List<Chain> context);
 
-        public abstract bool ProcessContract(ParticipantHandler participantHandler, List<Chain> chains);
+        public abstract bool ProcessContract(ParticipantHandler participantHandler, List<Chain> context);
     }
 }

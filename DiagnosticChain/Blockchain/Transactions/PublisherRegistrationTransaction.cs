@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Blockchain.Transactions
 {
+    [Serializable]
     public class PublisherRegistrationTransaction : ITransaction
     {
         public RSAParameters PublicKey { get; set; }

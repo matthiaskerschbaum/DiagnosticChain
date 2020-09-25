@@ -1,7 +1,3 @@
 master	publisher
 sub	publisher
 phys	physician
-scientist	query
-sub2	publisher
-sub3	publisher
-phys2	physician

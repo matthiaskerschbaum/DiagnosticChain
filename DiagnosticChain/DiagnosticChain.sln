@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeManagement", "NodeManag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkingFacilities", "NetworkingFacilities\NetworkingFacilities.csproj", "{B47AA8BE-B3C6-4E0C-9341-98AD16E2503D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProjekt", "TestProjekt\TestProjekt.csproj", "{ACAE250B-C756-4313-A70E-C5995A3DEA0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B47AA8BE-B3C6-4E0C-9341-98AD16E2503D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B47AA8BE-B3C6-4E0C-9341-98AD16E2503D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B47AA8BE-B3C6-4E0C-9341-98AD16E2503D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACAE250B-C756-4313-A70E-C5995A3DEA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAE250B-C756-4313-A70E-C5995A3DEA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAE250B-C756-4313-A70E-C5995A3DEA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAE250B-C756-4313-A70E-C5995A3DEA0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -312,7 +312,7 @@ namespace DiagnosticChain.UserInterface
 
             for (int i = 0; i < physicians.Length; i++)
             {
-                CLI.DisplayLine(i + "\t" + physicians[i].Name + ", " + physicians[i].Country + ", " + physicians[i].Region + "\t");
+                CLI.DisplayLine(i + "\t" + physicians[i].PhysicianIdentifier + ", " + physicians[i].Country + ", " + physicians[i].Region + "\t");
             }
 
             CLI.DisplayLineDelimiter();
@@ -415,7 +415,7 @@ namespace DiagnosticChain.UserInterface
             CLI.DisplayLine("The following physicians are available:\n");
             for (int i = 0; i < proposedPhysicians.Length; i++)
             {
-                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
+                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].PhysicianIdentifier + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
             }
             CLI.DisplayLineDelimiter();
 

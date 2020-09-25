@@ -189,7 +189,7 @@ namespace DiagnosticChain.UserInterface
 
             for (int i = 0; i < confirmedPhysicians.Length; i++)
             {
-                CLI.DisplayLine(i + "\t" + confirmedPhysicians[i].Name + ", " + confirmedPhysicians[i].Country + ", " + confirmedPhysicians[i].Region);
+                CLI.DisplayLine(i + "\t" + confirmedPhysicians[i].PhysicianIdentifier + ", " + confirmedPhysicians[i].Country + ", " + confirmedPhysicians[i].Region);
             }
 
             CLI.DisplayLineDelimiter();
@@ -209,7 +209,7 @@ namespace DiagnosticChain.UserInterface
 
             for (int i = 0; i < proposedPhysicians.Length; i++)
             {
-                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
+                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].PhysicianIdentifier + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
             }
 
             CLI.DisplayLineDelimiter();
@@ -413,7 +413,7 @@ namespace DiagnosticChain.UserInterface
             CLI.DisplayLine("The following physicians are available:\n");
             for (int i = 0; i < proposedPhysicians.Length; i++)
             {
-                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].Name + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
+                CLI.DisplayLine(i + "\t" + proposedPhysicians[i].PhysicianIdentifier + ", " + proposedPhysicians[i].Country + ", " + proposedPhysicians[i].Region);
             }
             CLI.DisplayLineDelimiter();
 

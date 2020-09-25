@@ -40,6 +40,25 @@ namespace NodeManagement
 
         }
 
+        public void BundleOpenTransactionsManually()
+        {
+            transactionBuffer.BundleTransactions(this);
+        }
+
+        public void EvaluateParkedTransactions()
+        {
+            List<ITransaction> readyToProcess = participantHandler.EvaluateParkedTransactions();
+
+            manipulateBufferedTransactions.WaitOne();
+
+            foreach (var t in readyToProcess)
+            {
+                transactionBuffer.RecordTransaction(t);
+            }
+
+            manipulateBufferedTransactions.Release();
+        }
+
         public Chain GetChain()
         {
             return chain;
@@ -75,10 +94,15 @@ namespace NodeManagement
         {
             if (chain.IsEmpty())
             {
+                manipulateBufferedTransactions.WaitOne();
+
                 transactionBuffer.RecordTransaction(initialPublisher);
                 transactionBuffer.RecordTransaction(initialVote);
 
                 transactionBuffer.BundleTransactions(this);
+
+                manipulateBufferedTransactions.Release();
+
                 PublishOpenBlocks(this);
             }
         }
@@ -102,18 +126,36 @@ namespace NodeManagement
             var participantHandler_Clone = participantHandler.Clone();
             success = chain.ValidateContextual(participantHandler_Clone, new List<Chain>() { this.chain });
 
-            //TODO Chain mit aktuellem Stand der Blockchain abgleichen => Collisions resolven (Nicht einfügen wenn aktueller Stand neuer ist als die empfangene Chain)
             if (success)
             {
-                success &= chain.ProcessContracts(participantHandler, new List<Chain>() { this.chain });
-                chain.ProcessContracts(participantHandler_Buffered, new List<Chain>() { this.chain });
-                success &= this.chain.Add(chain);
-            }
+                var deletedBlocks = this.chain.Add(chain);
+                var bufferedTransactions = transactionBuffer.Peek().GetTransactions();
+                var receivedTransaction = chain.GetTransactions();
 
-            //TODO Wenn eingefügt wird: UnpublishedBlocks auflösen (Transaktionen zurück in OpenTransactions stellen)
-            //TODO Wenn Chain übernommen wird => Blocks die eventuell aus aktueller Chain rausfliegen, werden von Chain zurückgegeben
-            //TODO Wenn Chain eingefügt wird: Transaktionen durchgehen, und alle offenen Transaktionen löschen, die in neuer Chain enthalten sind
-            //TODO Wenn Teile der alten Chain wegfliegen: Transaktionen durchgehen und die in offene Transaktionen mit aufnehmen, die nicht in neuer Chain enthalten sind
+                foreach (var b in deletedBlocks)
+                {
+                    foreach (var t in b.TransactionList)
+                    {
+                        if (!bufferedTransactions.Where(bt => bt.TransactionId == t.TransactionId).Any()
+                            || !receivedTransaction.Where(rt => rt.TransactionId == t.TransactionId).Any())
+                        {
+                            transactionBuffer.RecordTransaction(t);
+                        }
+                    }
+                }
+
+                var transactionsToUnbuffer = bufferedTransactions.Where(t => receivedTransaction.Where(rt => rt.TransactionId == t.TransactionId).Any());
+                foreach (var t in transactionsToUnbuffer)
+                {
+                    transactionBuffer.UnrecordTransaction(t);
+                }
+
+                participantHandler = new ParticipantHandler();
+                this.chain.ProcessContracts(participantHandler, new List<Chain>() { });
+
+                participantHandler_Buffered = participantHandler.Clone();
+                transactionBuffer.Peek().ProcessContracts(participantHandler_Buffered, new List<Chain>() { this.chain });
+            }
 
             manipulateChain.Release();
             manipulateBufferedTransactions.Release();
@@ -129,14 +171,41 @@ namespace NodeManagement
         public bool OnReceiveTransaction(ITransaction transaction)
         {
             var success = true;
+            var parked = false;
+
             manipulateBufferedTransactions.WaitOne();
+
             var peekTransactions = transactionBuffer.Peek();
             if (transaction.ValidateContextual(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions }))
             {
-                transactionBuffer.RecordTransaction(transaction);
-                success &= transaction.ProcessContract(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions });
+                
+                try
+                {
+                    success &= transaction.ProcessContract(participantHandler_Buffered, new List<Chain>() { chain, peekTransactions });
+                    if (success) transactionBuffer.RecordTransaction(transaction);
+                } catch (TransactionParkedException)
+                {
+                    success = false;
+                    parked = true;
+
+                    if (transaction.GetType() == typeof(PatientRegistrationTransaction)) participantHandler.parkedPatients.Add((PatientRegistrationTransaction)transaction);
+                    else if (transaction.GetType() == typeof(TreatmentTransaction)) participantHandler.parkedTreatments.Add((TreatmentTransaction)transaction);
+                    else if (transaction.GetType() == typeof(SymptomsTransaction)) participantHandler.parkedSymptoms.Add((SymptomsTransaction)transaction);
+                }
             }
-            CLI.DisplayLine("Recorded " + transactionBuffer.openTransactions.Count + " transactions " + (success ? "successfully" : "unsuccessfully"));
+            if (parked)
+            {
+                var count = participantHandler_Buffered.parkedPatients.Count()
+                    + participantHandler_Buffered.parkedTreatments.Count()
+                    + participantHandler_Buffered.parkedSymptoms.Count();
+
+                CLI.DisplayLine("Parked " + count + " transactions ");
+            }
+            else
+            {
+                CLI.DisplayLine("Recorded " + transactionBuffer.openTransactions.Count + " transactions " + (success ? "successfully" : "unsuccessfully"));
+            }
+
             manipulateBufferedTransactions.Release();
 
             return success;

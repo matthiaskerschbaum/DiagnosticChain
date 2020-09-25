@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Blockchain.Interfaces;
 
 namespace Blockchain.Utilities
@@ -7,23 +8,17 @@ namespace Blockchain.Utilities
     //Stores all the transactions and blocks that have not been added to the official chain yet
     public class TransactionBuffer
     {
-        public ConcurrentBag<ITransaction> openTransactions = new ConcurrentBag<ITransaction>();
-        public ConcurrentBag<Block> unpublishedBlocks = new ConcurrentBag<Block>();
+        public List<ITransaction> openTransactions = new List<ITransaction>();
+        public List<Block> unpublishedBlocks = new List<Block>();
 
         public void BundleTransactions(object state)
         {
-            if (!openTransactions.IsEmpty)
+            if (openTransactions.Count > 0)
             {
                 Block block = new Block();
 
-                while (!openTransactions.IsEmpty)
-                {
-                    ITransaction nextTransaction;
-                    if (openTransactions.TryTake(out nextTransaction))
-                    {
-                        block.AddTransaction(nextTransaction);
-                    }
-                }
+                block.TransactionList = openTransactions;
+                openTransactions = new List<ITransaction>();
 
                 unpublishedBlocks.Add(block);
             }
@@ -31,10 +26,11 @@ namespace Blockchain.Utilities
 
         public Block GetNextBlock()
         {
-            Block nextBlock;
-            if (unpublishedBlocks.TryTake(out nextBlock))
+            if (unpublishedBlocks.Count > 0)
             {
-                return nextBlock;
+                var ret = unpublishedBlocks[0];
+                unpublishedBlocks.RemoveAt(0);
+                return ret;
             }
 
             return null;
@@ -42,7 +38,7 @@ namespace Blockchain.Utilities
 
         public bool HasBlocks()
         {
-            return !unpublishedBlocks.IsEmpty;
+            return unpublishedBlocks.Count > 0;
         }
 
         public Chain Peek()
@@ -70,6 +66,11 @@ namespace Blockchain.Utilities
         public void RecordTransaction(ITransaction transaction)
         {
             openTransactions.Add(transaction);
+        }
+
+        public void UnrecordTransaction(ITransaction t)
+        {
+            openTransactions.Remove(t);
         }
     }
 }

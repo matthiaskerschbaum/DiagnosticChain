@@ -1,12 +1,14 @@
 ﻿using Blockchain.Entities;
 using Blockchain.Interfaces;
 using Blockchain.Utilities;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Blockchain.Transactions
 {
+    [Serializable]
     public class PatientRegistrationTransaction : ITransaction
     {
         public string Country { get; set; }
@@ -32,18 +34,28 @@ namespace Blockchain.Transactions
         {
             if (ValidateContextual(participantHandler, chains))
             {
-                participantHandler.AddPatient(new Patient()
-                {
-                    Address = TransactionId
-                    ,
-                    Country = Country
-                    ,
-                    Region = Region
-                    ,
-                    Birthyear = Birthyear
-                });
+                var k = participantHandler.CountSimilarPatients(Country, Region, Birthyear);
 
-                return true;
+                if (k < 3)
+                {
+                    throw new TransactionParkedException();
+                }
+                else
+                {
+
+                    participantHandler.AddPatient(new Patient()
+                    {
+                        Address = TransactionId
+                        ,
+                        Country = Country
+                        ,
+                        Region = Region
+                        ,
+                        Birthyear = Birthyear
+                    });
+
+                    return true;
+                }
             }
 
             return false;

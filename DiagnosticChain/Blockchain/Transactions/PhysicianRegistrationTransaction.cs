@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Blockchain.Transactions
 {
+    [Serializable]
     public class PhysicianRegistrationTransaction : ITransaction
     {
         public RSAParameters PublicKey { get; set; }
@@ -41,7 +42,7 @@ namespace Blockchain.Transactions
                     ,
                     Region = Region
                     ,
-                    Name = Name
+                    PhysicianIdentifier = Name
                 });
 
                 return true;
